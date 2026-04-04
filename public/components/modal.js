@@ -277,6 +277,152 @@ export function closeModal() {
 }
 
 // --------------------------------------------------------
+// promptModal - Ersatz für native prompt()
+// --------------------------------------------------------
+
+/**
+ * Öffnet ein Modal mit Textfeld als Ersatz für native prompt().
+ * Gibt ein Promise zurück: string bei OK, null bei Cancel/Escape.
+ *
+ * @param {string} label   - Beschriftung / Frage
+ * @param {string} [defaultValue=''] - Vorausgefüllter Wert
+ * @returns {Promise<string|null>}
+ */
+export function promptModal(label, defaultValue = '') {
+  return new Promise((resolve) => {
+    let resolved = false;
+
+    function finish(value) {
+      if (resolved) return;
+      resolved = true;
+      closeModal();
+      resolve(value);
+    }
+
+    openModal({
+      title: label,
+      size: 'sm',
+      content: `
+        <form id="prompt-modal-form" class="form-stack">
+          <div class="form-field">
+            <input class="form-input" id="prompt-modal-input" type="text"
+                   value="${defaultValue.replace(/"/g, '&quot;')}" autocomplete="off">
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn--ghost" id="prompt-modal-cancel">${t('common.cancel')}</button>
+            <button type="submit" class="btn btn--primary" id="prompt-modal-ok">${t('common.save')}</button>
+          </div>
+        </form>`,
+      onSave(panel) {
+        const form  = panel.querySelector('#prompt-modal-form');
+        const input = panel.querySelector('#prompt-modal-input');
+        const cancel = panel.querySelector('#prompt-modal-cancel');
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          finish(input.value.trim() || null);
+        });
+
+        cancel.addEventListener('click', () => finish(null));
+
+        // Escape soll null liefern (closeModal wird über onEscape bereits ausgelöst)
+        const escHandler = (e) => {
+          if (e.key === 'Escape') {
+            document.removeEventListener('keydown', escHandler);
+            finish(null);
+          }
+        };
+        document.addEventListener('keydown', escHandler);
+
+        // Overlay-Click soll null liefern
+        const overlay = panel.closest('.modal-overlay');
+        if (overlay) {
+          overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) finish(null);
+          });
+        }
+
+        // Input fokussieren und Text selektieren
+        setTimeout(() => {
+          input.focus();
+          input.select();
+        }, 50);
+      },
+    });
+  });
+}
+
+// --------------------------------------------------------
+// selectModal - Ersatz für native prompt() mit Auswahlliste
+// --------------------------------------------------------
+
+/**
+ * Öffnet ein Modal mit Select-Dropdown als Ersatz für native prompt() bei Listenauswahl.
+ *
+ * @param {string} label - Beschriftung / Frage
+ * @param {{ value: string|number, label: string }[]} options - Auswahloptionen
+ * @returns {Promise<string|number|null>}
+ */
+export function selectModal(label, options) {
+  return new Promise((resolve) => {
+    let resolved = false;
+
+    function finish(value) {
+      if (resolved) return;
+      resolved = true;
+      closeModal();
+      resolve(value);
+    }
+
+    const optionsHtml = options
+      .map((o) => `<option value="${String(o.value).replace(/"/g, '&quot;')}">${o.label}</option>`)
+      .join('');
+
+    openModal({
+      title: label,
+      size: 'sm',
+      content: `
+        <form id="select-modal-form" class="form-stack">
+          <div class="form-field">
+            <select class="form-input" id="select-modal-input">${optionsHtml}</select>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn--ghost" id="select-modal-cancel">${t('common.cancel')}</button>
+            <button type="submit" class="btn btn--primary" id="select-modal-ok">${t('common.save')}</button>
+          </div>
+        </form>`,
+      onSave(panel) {
+        const form   = panel.querySelector('#select-modal-form');
+        const select = panel.querySelector('#select-modal-input');
+        const cancel = panel.querySelector('#select-modal-cancel');
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          finish(select.value);
+        });
+
+        cancel.addEventListener('click', () => finish(null));
+
+        const escHandler = (e) => {
+          if (e.key === 'Escape') {
+            document.removeEventListener('keydown', escHandler);
+            finish(null);
+          }
+        };
+        document.addEventListener('keydown', escHandler);
+
+        const overlay = panel.closest('.modal-overlay');
+        if (overlay) {
+          overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) finish(null);
+          });
+        }
+      },
+    });
+  });
+}
+
+// --------------------------------------------------------
 // Inline Blur-Validierung
 // --------------------------------------------------------
 

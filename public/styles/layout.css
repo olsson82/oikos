@@ -690,6 +690,18 @@
   gap: var(--space-4);
 }
 
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
 .modal-panel__footer {
   display: flex;
   align-items: center;

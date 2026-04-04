@@ -6,7 +6,7 @@
 
 import { api } from '/api.js';
 import { renderRRuleFields, bindRRuleEvents, getRRuleValues } from '/rrule-ui.js';
-import { openModal as openSharedModal, closeModal, wireBlurValidation, btnSuccess, btnError } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal, wireBlurValidation, btnSuccess, btnError, promptModal } from '/components/modal.js';
 import { stagger, vibrate } from '/utils/ux.js';
 import { t, formatDate } from '/i18n.js';
 import { esc } from '/utils/html.js';
@@ -481,10 +481,10 @@ async function handleDeleteTask(id, container) {
 }
 
 async function handleAddSubtask(parentId, container) {
-  const title = prompt(t('tasks.subtaskPrompt'));
-  if (!title?.trim()) return;
+  const title = await promptModal(t('tasks.subtaskPrompt'));
+  if (!title) return;
   try {
-    await api.post('/tasks', { title: title.trim(), parent_task_id: parentId });
+    await api.post('/tasks', { title, parent_task_id: parentId });
     await loadTasks(container);
   } catch (err) {
     window.oikos.showToast(err.message, 'danger');
