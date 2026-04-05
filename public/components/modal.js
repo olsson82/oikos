@@ -536,7 +536,7 @@ export function validateAll(formContainer) {
 export function btnSuccess(btn, originalLabel) {
   const label = originalLabel ?? btn.textContent;
   btn.classList.add('btn--success');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reducedMotion) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('width', '16');
@@ -579,7 +579,7 @@ export function btnLoading(btn) {
  * @param {HTMLButtonElement} btn
  */
 export function btnError(btn) {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
     btn.classList.add('btn--error-static');
     setTimeout(() => btn.classList.remove('btn--error-static'), 700);
     return;

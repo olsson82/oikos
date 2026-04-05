@@ -10,8 +10,8 @@ import assert from 'node:assert/strict';
 // /i18n.js wird durch test-browser-loader.mjs gemockt (--loader Flag)
 const { wireBlurValidation, btnSuccess, btnError } = await import('./public/components/modal.js');
 
-// window.matchMedia und document.createElementNS werden von btnSuccess/btnError benötigt
-global.window = { matchMedia: () => ({ matches: false }) };
+// matchMedia und document.createElementNS werden von btnSuccess/btnError benötigt
+global.matchMedia = () => ({ matches: false });
 
 const _makeSvgEl = (tag) => {
   const attrs = {};
