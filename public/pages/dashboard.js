@@ -390,6 +390,7 @@ function renderFab() {
   `).join('');
 
   return `
+    <div class="fab-backdrop" id="fab-backdrop"></div>
     <div class="fab-container" id="fab-container">
       <button class="fab-main" id="fab-main" aria-label="${t('nav.quickActions')}" aria-expanded="false">
         <i data-lucide="plus" aria-hidden="true"></i>
@@ -402,8 +403,9 @@ function renderFab() {
 }
 
 function initFab(container, signal) {
-  const fabMain    = container.querySelector('#fab-main');
-  const fabActions = container.querySelector('#fab-actions');
+  const fabMain     = container.querySelector('#fab-main');
+  const fabActions  = container.querySelector('#fab-actions');
+  const fabBackdrop = container.querySelector('#fab-backdrop');
   if (!fabMain) return;
 
   let open = false;
@@ -414,6 +416,7 @@ function initFab(container, signal) {
     fabMain.setAttribute('aria-expanded', String(open));
     fabActions.classList.toggle('fab-actions--visible', open);
     fabActions.setAttribute('aria-hidden', String(!open));
+    fabBackdrop?.classList.toggle('fab-backdrop--visible', open);
     fabActions.querySelectorAll('[role="button"]').forEach((el) => {
       el.tabIndex = open ? 0 : -1;
     });
@@ -538,6 +541,7 @@ export async function render(container, { user }) {
           const newWidget = container.querySelector('#weather-widget');
           if (newWidget && window.lucide) window.lucide.createIcons({ el: newWidget });
           wireWeatherRefresh(container);
+          window.oikos?.showToast(t('dashboard.weatherUpdated'), 'success', 1500);
         }
       } catch { /* silently ignore */ }
     };
@@ -564,6 +568,7 @@ function wireWeatherRefresh(container) {
         const newWidget = container.querySelector('#weather-widget');
         if (newWidget && window.lucide) window.lucide.createIcons({ el: newWidget });
         wireWeatherRefresh(container);
+        window.oikos?.showToast(t('dashboard.weatherUpdated'), 'success', 1500);
       }
     } catch { /* silently ignore */ }
   };

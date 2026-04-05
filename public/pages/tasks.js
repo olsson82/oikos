@@ -656,6 +656,7 @@ function renderTaskList(container) {
   stagger(listEl.querySelectorAll('.swipe-row, .kanban-card'));
   updateOverdueBadge();
   wireSwipeGestures(container);
+  maybeShowSwipeHint(container);
 }
 
 function renderFilters(container) {
@@ -727,6 +728,9 @@ function updateOverdueBadge() {
 const SWIPE_THRESHOLD    = 80;   // px - Mindestweg für Aktion
 const SWIPE_MAX_VERT     = 12;   // px - vertikaler Bewegungs-Toleranzbereich (darunter: kein Scroll-Abbruch)
 const SWIPE_LOCK_VERT    = 30;   // px - ab diesem Weg gilt es als Scroll (Swipe abgebrochen)
+
+const SWIPE_HINT_KEY = 'oikos:swipeHintSeen';
+const SWIPE_HINT_MAX = 3;
 
 function wireSwipeGestures(container) {
   const listEl = container.querySelector('#task-list');
@@ -851,6 +855,27 @@ function wireSwipeGestures(container) {
 }
 
 // --------------------------------------------------------
+// Swipe-Affordance Hint (Long Loop)
+// Zeigt den Nudge-Hinweis maximal 3x (gespeichert in localStorage).
+// --------------------------------------------------------
+
+function maybeShowSwipeHint(container) {
+  if (window.innerWidth >= 1024) return; // Desktop: Swipe nicht relevant
+  const count = parseInt(localStorage.getItem(SWIPE_HINT_KEY) ?? '0', 10);
+  if (count >= SWIPE_HINT_MAX) return;
+
+  const firstRow = container.querySelector('.swipe-row');
+  if (!firstRow) return;
+
+  firstRow.classList.add('swipe-row--hint');
+  firstRow.addEventListener('animationend', () => {
+    firstRow.classList.remove('swipe-row--hint');
+  }, { once: true });
+
+  localStorage.setItem(SWIPE_HINT_KEY, String(count + 1));
+}
+
+// --------------------------------------------------------
 // Event-Verdrahtung
 // --------------------------------------------------------
 
@@ -921,6 +946,7 @@ function wireTaskList(container) {
 
     if (action === 'toggle-status') {
       const status = target.dataset.status;
+      vibrate(15);
       target.classList.toggle('task-status-btn--done', status !== 'done');
       target.closest('.task-card')?.classList.toggle('task-card--done', status !== 'done');
       try {

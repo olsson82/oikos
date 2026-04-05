@@ -65,6 +65,7 @@
     "loadError": "Instrumentpanelen kunde inte laddas helt.",
     "weatherRefresh": "Uppdatera vädret",
     "weatherRefreshTitle": "Uppdatera",
+    "weatherUpdated": "Väder uppdaterat",
     "weatherFeelsLike": "Känns som {{temp}}° · {{humidity}}% · Vind {{wind}} km/h",
     "fabTaskLabel": "Lägg till uppgift",
     "fabCalendarLabel": "Lägg till händelse",

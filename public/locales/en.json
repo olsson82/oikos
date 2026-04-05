@@ -65,6 +65,7 @@
     "loadError": "Dashboard could not be fully loaded.",
     "weatherRefresh": "Refresh weather",
     "weatherRefreshTitle": "Refresh",
+    "weatherUpdated": "Weather updated",
     "weatherFeelsLike": "Feels like {{temp}}° · {{humidity}}% · Wind {{wind}} km/h",
     "fabTaskLabel": "Add task",
     "fabCalendarLabel": "Add event",

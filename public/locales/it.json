@@ -65,6 +65,7 @@
     "loadError": "Impossibile caricare completamente la dashboard.",
     "weatherRefresh": "Aggiorna meteo",
     "weatherRefreshTitle": "Aggiorna",
+    "weatherUpdated": "Meteo aggiornato",
     "weatherFeelsLike": "Percepiti {{temp}}° · {{humidity}}% · Vento {{wind}} km/h",
     "fabTaskLabel": "Aggiungi compito",
     "fabCalendarLabel": "Aggiungi evento",

@@ -65,6 +65,7 @@
     "loadError": "Dashboard konnte nicht vollständig geladen werden.",
     "weatherRefresh": "Wetter aktualisieren",
     "weatherRefreshTitle": "Aktualisieren",
+    "weatherUpdated": "Wetter aktualisiert",
     "weatherFeelsLike": "Gefühlt {{temp}}° · {{humidity}}% · Wind {{wind}} km/h",
     "fabTaskLabel": "Aufgabe hinzufügen",
     "fabCalendarLabel": "Termin hinzufügen",
