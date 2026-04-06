@@ -626,6 +626,8 @@
   align-items: flex-end;
   justify-content: center;
   animation: modal-overlay-in 0.2s ease forwards;
+  /* iOS Safari: click-Events auf non-interactive divs erfordern cursor:pointer */
+  cursor: pointer;
 }
 
 @media (min-width: 768px) {
@@ -642,6 +644,8 @@
   overflow-y: auto;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   animation: modal-slide-up 0.25s var(--ease-out) forwards;
+  /* Cursor vom Overlay zurücksetzen */
+  cursor: default;
 }
 
 @media (min-width: 768px) {
@@ -672,8 +676,8 @@
 }
 
 .modal-panel__close {
-  width: var(--target-sm);
-  height: var(--target-sm);
+  width: var(--target-md);
+  height: var(--target-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -681,12 +685,7 @@
   color: var(--color-text-secondary);
   transition: background-color var(--transition-fast);
   position: relative;
-}
-
-.modal-panel__close::before {
-  content: '';
-  position: absolute;
-  inset: -8px;
+  flex-shrink: 0;
 }
 
 .modal-panel__close:hover {

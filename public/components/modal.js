@@ -115,14 +115,20 @@ function _wireSheetSwipe(panel) {
   let dragging = false;
 
   panel.addEventListener('touchstart', (e) => {
-    startY = e.touches[0].clientY;
+    // Nur von der Handle-Zone (obere 48px) oder wenn Panel ganz oben → Swipe erlauben
+    const touchY = e.touches[0].clientY;
+    const rect = panel.getBoundingClientRect();
+    const isHandleZone = touchY - rect.top < 48;
+    const isScrolledToTop = panel.scrollTop <= 0;
+    if (!isHandleZone && !isScrolledToTop) return;
+    startY = touchY;
     dragging = true;
   }, { passive: true });
 
   panel.addEventListener('touchmove', (e) => {
     if (!dragging) return;
     const dy = e.touches[0].clientY - startY;
-    if (dy < 0) return; // Kein Swipe nach oben
+    if (dy < 0) { dragging = false; return; } // Aufwärts-Scroll: Swipe abbrechen
     panel.style.transform = `translateY(${dy * 0.6}px)`;
   }, { passive: true });
 
@@ -223,6 +229,12 @@ export function openModal({ title, content, onSave, onDelete, size = 'md' } = {}
   activeOverlay.addEventListener('click', (e) => {
     if (e.target === activeOverlay) closeModal();
   });
+
+  // iOS PWA: click-Events auf non-interactive divs sind unzuverlässig →
+  // touchend als Fallback (passive, damit Scroll nicht blockiert wird)
+  activeOverlay.addEventListener('touchend', (e) => {
+    if (e.target === activeOverlay) closeModal();
+  }, { passive: true });
 
   // Close-Button
   activeOverlay.querySelector('[data-action="close-modal"]')
