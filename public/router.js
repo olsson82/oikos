@@ -296,6 +296,35 @@ function renderAppShell(container) {
 
   // Bottom-Nav: Scroll-Snap + Dot-Indikator
   initBottomNavSwipe(container);
+
+  // Bottom-Nav: Auto-Hide beim Runterscrollen (Mobile)
+  initNavHideOnScroll(container);
+}
+
+/**
+ * Versteckt die Bottom-Nav beim Runterscrollen, zeigt sie beim Hochscrollen.
+ * Nur auf Mobile aktiv (< 1024px), da auf Desktop die Sidebar fest sichtbar ist.
+ */
+function initNavHideOnScroll(container) {
+  const content = container.querySelector('#main-content');
+  const nav = container.querySelector('.nav-bottom');
+  if (!content || !nav) return;
+
+  let lastY = 0;
+
+  content.addEventListener('scroll', () => {
+    if (window.innerWidth >= 1024) return;
+
+    const y = content.scrollTop;
+    if (y < 10) {
+      nav.classList.remove('nav-bottom--hidden');
+    } else if (y > lastY + 4) {
+      nav.classList.add('nav-bottom--hidden');
+    } else if (y < lastY - 4) {
+      nav.classList.remove('nav-bottom--hidden');
+    }
+    lastY = y;
+  }, { passive: true });
 }
 
 /**

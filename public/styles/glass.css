@@ -440,3 +440,180 @@ textarea.form-input {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ================================================================
+ * PHASE 3 — Micro-Interactions + Polish
+ * ================================================================ */
+
+/* ================================================================
+ * 18. Bottom-Nav Auto-Hide on Scroll
+ *
+ * .nav-bottom--hidden: Nav gleitet nach unten aus dem Viewport.
+ * Per JS über scroll-Listener auf .app-content gesetzt.
+ * FAB bleibt sichtbar (Daumen-Erreichbarkeit wichtiger als Konsistenz).
+ * ================================================================ */
+.nav-bottom {
+  transition:
+    transform var(--transition-base) var(--ease-out),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  will-change: transform;
+}
+
+.nav-bottom--hidden {
+  transform: translateY(calc(100% + var(--safe-area-inset-bottom)));
+  pointer-events: none;
+}
+
+/* ================================================================
+ * 19. Modal-Entrance — Glass Spring
+ *
+ * Overlay: Blur-Ramp statt harten Fade (backdrop-filter via opacity).
+ * Panel Desktop: Spring-Overshooting statt linearem scale-in.
+ * Panel Mobile: Spring-Slide-up mit leichtem Bounce.
+ * ================================================================ */
+@keyframes glass-modal-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.90) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes glass-sheet-in {
+  from {
+    opacity: 0.6;
+    transform: translateY(40%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .modal-panel {
+    animation: glass-modal-scale-in 0.32s var(--ease-glass) forwards;
+  }
+}
+
+@media (max-width: 767px) {
+  .modal-panel {
+    animation: glass-sheet-in 0.30s var(--ease-glass) forwards;
+  }
+}
+
+/* ================================================================
+ * 20. Seitentransitionen — Spring Easing
+ *
+ * Ersetzt die festen 0.2s ease durch --transition-base + --ease-glass
+ * für eine weichere, physikalisch plausible Bewegung.
+ * ================================================================ */
+.page-transition--in-right,
+.page-transition--in-left {
+  animation-duration: 0.30s;
+  animation-timing-function: var(--ease-glass);
+}
+
+.page-transition--out-left,
+.page-transition--out-right {
+  animation-duration: 0.14s;
+  animation-timing-function: var(--ease-out);
+}
+
+/* ================================================================
+ * 21. List-Stagger — Spring Timing + erhöhter Offset
+ *
+ * Leicht längere Laufzeit + spring-Easing für einen
+ * physikalischeren Erscheinungseffekt.
+ * ================================================================ */
+.list-stagger > * {
+  animation-duration: 0.28s;
+  animation-timing-function: var(--ease-glass);
+}
+
+/* ================================================================
+ * 22. Focus-Ring — Scale-In Animation
+ *
+ * Fokus-Indikator erscheint mit sanftem Scale-Pop statt hart.
+ * Kein outline-transition (outline ist nicht transition-fähig),
+ * daher box-shadow als Alternative für focus-visible.
+ * ================================================================ */
+:focus-visible {
+  transition:
+    box-shadow var(--transition-fast),
+    outline-offset var(--transition-fast);
+  outline-offset: 3px;
+}
+
+/* ================================================================
+ * 23. Skeleton Shimmer — Glass Shimmer
+ *
+ * Helleres, richtungstreues Shimmer mit glass-artiger Lichtquelle.
+ * Behält bestehende Animation, verbessert nur den Farbverlauf.
+ * ================================================================ */
+.skeleton {
+  background: linear-gradient(
+    105deg,
+    var(--color-border-subtle) 0%,
+    var(--color-border-subtle) 30%,
+    color-mix(in srgb, var(--color-surface) 90%, var(--glass-highlight)) 50%,
+    var(--color-border-subtle) 70%,
+    var(--color-border-subtle) 100%
+  );
+  background-size: 250% 100%;
+}
+
+/* ================================================================
+ * 24. FAB — Attention Pulse (subtil, einmalig beim Erscheinen)
+ *
+ * Leichter Ring-Expand nach dem fab-in, signalisiert Interaktivität.
+ * Nur einmal, kein dauerhaftes Blinken (kein infinite loop).
+ * ================================================================ */
+@keyframes fab-ring-pulse {
+  0%   { box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.28), 0 0 0 0 color-mix(in srgb, var(--module-accent, var(--color-btn-primary)) 50%, transparent); }
+  60%  { box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.28), 0 0 0 10px transparent; }
+  100% { box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.28), 0 0 0 0 transparent; }
+}
+
+.fab {
+  animation:
+    fab-in 0.35s var(--ease-out) backwards,
+    fab-ring-pulse 0.6s var(--ease-out) 0.4s 1 backwards;
+}
+
+/* ================================================================
+ * 25. Accessibility — Phase 3 Overrides
+ * ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .nav-bottom {
+    transition: none;
+  }
+
+  .nav-bottom--hidden {
+    /* Sofort verstecken ohne Animation */
+    transition: none;
+  }
+
+  .modal-panel {
+    animation: none;
+  }
+
+  .page-transition--in-right,
+  .page-transition--in-left,
+  .page-transition--out-left,
+  .page-transition--out-right {
+    animation-duration: 0.01ms !important;
+  }
+
+  .list-stagger > * {
+    animation-duration: 0.01ms !important;
+  }
+
+  .fab {
+    animation: none;
+  }
+}
