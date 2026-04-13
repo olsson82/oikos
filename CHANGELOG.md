@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.4] - 2026-04-13
+
+### Fixed
+- iOS PWA: bottom navigation no longer shifts upward in standalone mode - root cause was `body` having `min-height: 100dvh` and no `overflow: hidden`, which allowed the body to scroll; in iOS WebKit standalone mode, body scroll moves `position: fixed` elements rather than keeping them pinned; fix: `html` and `body` are now `overflow: hidden` with fixed height so all scrolling is confined to `.app-content`
+- Service worker: cache bumped to `shell-v30` to ensure iOS devices receive the updated `reset.css`
+
 ## [0.17.3] - 2026-04-13
 
 ### Fixed
