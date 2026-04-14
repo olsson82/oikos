@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.2] - 2026-04-14
+
+### Improved
+- Accessibility: FAB focus ring now uses a double-ring pattern (inner `--color-bg`, outer `--color-accent`) visible on any background - previously hardcoded `#fff` was invisible on light backgrounds
+- Accessibility: added `forced-colors` media query fallback for Windows High Contrast Mode (buttons, cards, modals, active nav items)
+- Design tokens: extracted `--color-accent-secondary`, `--content-max-width-narrow`, `--cal-hour-height` - eliminates last hardcoded values in layout, settings, and calendar CSS
+- Dark mode: Apple sync logo in settings now uses semantic tokens (`--color-text-primary` / `--color-bg`) instead of fixed neutrals that didn't invert correctly
+- Sidebar logo gradient now references `--color-accent-secondary` token instead of hardcoded `#7C5CFC`
+
 ## [0.19.1] - 2026-04-14
 
 ### Fixed

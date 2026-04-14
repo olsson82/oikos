@@ -14,7 +14,7 @@
    -------------------------------------------------------- */
 
 .settings-page {
-  max-width: 720px;
+  max-width: var(--content-max-width-narrow);
   margin: 0 auto;
 }
 
@@ -250,8 +250,8 @@
 }
 
 .settings-sync-logo--apple {
-  background: var(--neutral-900);
-  color: var(--neutral-50);
+  background: var(--color-text-primary);
+  color: var(--color-bg);
 }
 
 .settings-sync-info__name {

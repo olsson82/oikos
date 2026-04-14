@@ -253,8 +253,9 @@
 }
 
 .page-fab:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--color-bg);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-accent);
 }
 
 /* Desktop: FAB Position anpassen (keine Bottom-Nav) und etwas kleiner */
@@ -333,7 +334,7 @@
     width: var(--target-sm);
     height: var(--target-sm);
     border-radius: var(--radius-sm);
-    background: linear-gradient(135deg, var(--color-accent) 0%, #7C5CFC 100%);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-secondary) 100%);
     color: var(--color-text-on-accent);
     font-size: var(--text-sm);
     font-weight: var(--font-weight-bold);
@@ -942,8 +943,9 @@
 }
 
 .fab:focus-visible {
-  outline: 2px solid #fff;
+  outline: 2px solid var(--color-bg);
   outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--color-accent);
 }
 
 @media (min-width: 1024px) {
@@ -1738,4 +1740,16 @@
   color: var(--color-text-on-accent);
   font-size: var(--text-sm);
   border-radius: 0 0 var(--radius-sm) 0;
+}
+
+/* --------------------------------------------------------
+ * Windows High Contrast / Forced Colors
+ * -------------------------------------------------------- */
+@media (forced-colors: active) {
+  .btn,
+  .page-fab,
+  .fab          { border: 1px solid ButtonText; }
+  .card         { border: 1px solid CanvasText; }
+  .modal-panel  { border: 2px solid CanvasText; }
+  .nav-item[aria-current="page"] { border-bottom: 2px solid Highlight; }
 }

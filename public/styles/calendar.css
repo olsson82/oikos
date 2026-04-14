@@ -288,7 +288,7 @@
 
 .week-view__body {
   display: flex;
-  min-height: calc(24 * 56px); /* 24h × 56px pro Stunde */
+  min-height: calc(24 * var(--cal-hour-height)); /* 24h × 56px pro Stunde */
   position: relative;
 }
 
@@ -299,7 +299,7 @@
 }
 
 .week-view__time-slot {
-  height: 56px;
+  height: var(--cal-hour-height);
   padding-right: var(--space-2);
   display: flex;
   align-items: flex-start;
@@ -415,7 +415,7 @@
 
 .day-view__body {
   display: flex;
-  min-height: calc(24 * 56px);
+  min-height: calc(24 * var(--cal-hour-height));
   position: relative;
 }
 

@@ -64,6 +64,7 @@
   --color-accent-hover:     #1D4ED8;
   --color-accent-active:    #1E40AF;
   --color-accent-deep:      #1E5CB3;       /* Tiefer Akzent für Gradienten, Wetter-Widget */
+  --color-accent-secondary: #7C5CFC;       /* Sekundärer Akzent für Logo-Gradient */
   --color-accent-light:     #EFF6FF;
   --color-accent-subtle:    #DBEAFE;
   --color-btn-primary:      #2554C7;       /* WCAG AA: 6.62:1 auf weiß (weißer Text) */
@@ -223,6 +224,8 @@
   --sidebar-width: 56px;             /* collapsed icon-only (1024–1279px) */
   --sidebar-width-expanded: 220px;   /* full sidebar (1280px+), max 240px laut Spec */
   --content-max-width: 1280px;
+  --content-max-width-narrow: 720px;
+  --cal-hour-height: 56px;
 
   /* --------------------------------------------------------
    * 13. Sidebar
@@ -362,6 +365,8 @@
     --color-btn-primary:       #3B82F6;
     --color-btn-primary-hover: #2563EB;
 
+    --color-accent-secondary: #A78BFA;
+
     /* Semantische Farben - Dark Mode */
     --color-success:       #4ADE80;
     --color-warning:       #F59E0B;
@@ -463,6 +468,7 @@
   --color-accent-subtle:     #1E3050;
   --color-btn-primary:       #3B82F6;
   --color-btn-primary-hover: #2563EB;
+  --color-accent-secondary:  #A78BFA;
 
   /* Semantische Farben - Dark Mode */
   --color-success:       #4ADE80;
