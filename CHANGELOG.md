@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.2] - 2026-04-14
+
+### Fixed
+- Login failure behind Caddy/nginx reverse proxy in Docker: default `TRUST_PROXY` changed from `'loopback'` to `1` (trust one proxy hop). With `'loopback'`, Express ignored `X-Forwarded-Proto: https` from Caddy (which runs on a Docker bridge IP, not loopback), causing `req.secure = false` and express-session to silently drop the session cookie. The new default of `1` correctly handles any single-proxy setup without requiring manual configuration.
+- `docker-compose.yml`: added inline comments explaining reverse proxy vs. direct-access configuration
+- `docs/docker-compose.portainer.yml`: added explicit `TRUST_PROXY` variable with default `1`
+
 ## [0.18.1] - 2026-04-14
 
 ### Added

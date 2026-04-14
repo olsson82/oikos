@@ -65,9 +65,12 @@ app.use(helmet({
   } : false,
 }));
 
-// Trust Proxy: nur aktivieren wenn ein Reverse Proxy vorgeschaltet ist (TRUST_PROXY env var).
-// Default 'loopback' akzeptiert nur X-Forwarded-For von localhost - verhindert IP-Spoofing.
-app.set('trust proxy', process.env.TRUST_PROXY || 'loopback');
+// Trust Proxy: Default 1 = ersten Proxy-Hop vertrauen (korrekt für Caddy/nginx in Docker).
+// Wird auf 'loopback' gesetzt wenn der Server direkt ohne Reverse-Proxy betrieben wird.
+// Hintergrund: Bei Docker + Caddy/nginx kommt der Request von einer Bridge-IP (z.B. 172.x.x.x),
+// nicht von loopback. Mit 'loopback' ignoriert Express das X-Forwarded-Proto-Header von Caddy,
+// req.secure bleibt false, und express-session setzt keinen Session-Cookie (Login schlägt fehl).
+app.set('trust proxy', process.env.TRUST_PROXY !== undefined ? process.env.TRUST_PROXY : 1);
 
 // --------------------------------------------------------
 // Request-Parsing

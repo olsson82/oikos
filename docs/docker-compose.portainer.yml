@@ -31,8 +31,11 @@ services:
       - DB_PATH=/data/oikos.db
       - SESSION_SECRET=${SESSION_SECRET:?Set SESSION_SECRET in .env}
       - DB_ENCRYPTION_KEY=${DB_ENCRYPTION_KEY:?Set DB_ENCRYPTION_KEY in .env}
-      # Set to true when behind a reverse proxy with HTTPS
+      # Set to true when behind a reverse proxy with HTTPS (Caddy, nginx, Traefik)
       - SESSION_SECURE=${SESSION_SECURE:-false}
+      # Trust proxy hops (default: 1 for Docker+reverse-proxy setups)
+      # Set to 'loopback' if running without a reverse proxy
+      - TRUST_PROXY=${TRUST_PROXY:-1}
       # Weather (optional)
       - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY:-}
       - OPENWEATHER_CITY=${OPENWEATHER_CITY:-Berlin}
