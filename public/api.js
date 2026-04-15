@@ -52,6 +52,14 @@ async function apiFetch(path, options = {}, _retried = false) {
   // CSRF-Token-Desync (haeufig nach iOS-PWA-Resume): einmal GET /auth/me
   // ausfuehren um den CSRF-Token zu erneuern, dann den Request wiederholen.
   if (response.status === 403 && stateChanging && !_retried) {
+    // Token aus der 403-Antwort selbst extrahieren (Server liefert den
+    // korrekten Token im Header mit, auch bei Fehlschlag)
+    const errorCsrf = response.headers.get('X-CSRF-Token');
+    if (errorCsrf) {
+      _csrfToken = errorCsrf;
+      return apiFetch(path, options, true);
+    }
+    // Fallback: /auth/me aufrufen um Token zu erneuern
     const meRes = await fetch(`${API_BASE}/auth/me`, { credentials: 'same-origin', cache: 'no-store' });
     if (meRes.status === 401) {
       window.dispatchEvent(new CustomEvent('auth:expired'));
@@ -62,9 +70,13 @@ async function apiFetch(path, options = {}, _retried = false) {
     return apiFetch(path, options, true);
   }
 
+  // CSRF-Token aus Response-Header extrahieren (wird bei jeder API-Antwort mitgeliefert)
+  const csrfHeader = response.headers.get('X-CSRF-Token');
+  if (csrfHeader) _csrfToken = csrfHeader;
+
   const data = await response.json().catch(() => null);
 
-  // CSRF-Token aus Response-Body extrahieren (zuverlaessiger als Cookie auf iOS)
+  // Fallback: CSRF-Token aus Response-Body (fuer /auth/me und /auth/login)
   if (data?.csrfToken) _csrfToken = data.csrfToken;
 
   if (!response.ok) {

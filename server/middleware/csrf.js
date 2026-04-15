@@ -41,6 +41,10 @@ function csrfMiddleware(req, res, next) {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 Tage (gleich wie Session)
   });
 
+  // Token auch als Response-Header senden (zuverlaessiger als Cookie auf iOS-PWA,
+  // und bei jedem Request aktuell - nicht nur bei /auth/me und /auth/login)
+  res.setHeader('X-CSRF-Token', req.session.csrfToken);
+
   // Safe Methods benötigen keine Validierung
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
     return next();
