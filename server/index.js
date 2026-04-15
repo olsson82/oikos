@@ -24,6 +24,7 @@ import contactsRouter from './routes/contacts.js';
 import budgetRouter from './routes/budget.js';
 import weatherRouter from './routes/weather.js';
 import preferencesRouter from './routes/preferences.js';
+import remindersRouter from './routes/reminders.js';
 
 const log     = createLogger('Server');
 const logSync = createLogger('Sync');
@@ -165,6 +166,7 @@ app.use('/api/v1/contacts', contactsRouter);
 app.use('/api/v1/budget', budgetRouter);
 app.use('/api/v1/weather', weatherRouter);
 app.use('/api/v1/preferences', preferencesRouter);
+app.use('/api/v1/reminders', remindersRouter);
 
 // --------------------------------------------------------
 // Health-Check (für Docker)

@@ -10,6 +10,7 @@ import { openModal as openSharedModal, closeModal, wireBlurValidation, validateA
 import { stagger, vibrate } from '/utils/ux.js';
 import { t, formatDate } from '/i18n.js';
 import { esc } from '/utils/html.js';
+import { refresh as refreshReminders } from '/reminders.js';
 
 // --------------------------------------------------------
 // Konstanten
@@ -243,7 +244,7 @@ function renderTaskGroups(tasks, groupMode) {
 // Task-Modal (Erstellen / Bearbeiten)
 // --------------------------------------------------------
 
-function renderModalContent({ task = null, users = [] } = {}) {
+function renderModalContent({ task = null, users = [], reminder = null } = {}) {
   const isEdit = !!task;
 
   const userOptions = users.map((u) =>
@@ -334,6 +335,8 @@ function renderModalContent({ task = null, users = [] } = {}) {
 
       ${renderRRuleFields('task', task?.recurrence_rule)}
 
+      ${renderReminderSection(reminder)}
+
       <div id="task-form-error" class="login-error" hidden></div>
 
       <div class="modal-panel__footer" style="padding:0;border:none;margin-top:var(--space-6)">
@@ -392,15 +395,51 @@ async function loadTaskForEdit(id) {
   return data.data;
 }
 
+async function loadReminderForTask(taskId) {
+  try {
+    const data = await api.get(`/reminders?entity_type=task&entity_id=${taskId}`);
+    return data.data;
+  } catch {
+    return null;
+  }
+}
+
+function renderReminderSection(reminder = null) {
+  const hasReminder  = !!reminder;
+  const remindDate   = hasReminder ? reminder.remind_at.slice(0, 10) : '';
+  const remindTime   = hasReminder ? reminder.remind_at.slice(11, 16) : '';
+
+  return `
+    <div class="reminder-section">
+      <div class="reminder-section__header">
+        <label class="toggle" style="margin:0">
+          <input type="checkbox" id="reminder-toggle" ${hasReminder ? 'checked' : ''}>
+          <span class="toggle__track"></span>
+          <span class="reminder-section__title">${t('reminders.enableLabel')}</span>
+        </label>
+      </div>
+      <div id="reminder-fields" class="reminder-fields" ${hasReminder ? '' : 'style="display:none"'}>
+        <div class="form-group" style="margin:0">
+          <label class="label" for="reminder-date">${t('reminders.dateLabel')}</label>
+          <input class="input" type="date" id="reminder-date" value="${remindDate}">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="label" for="reminder-time">${t('reminders.timeLabel')}</label>
+          <input class="input" type="time" id="reminder-time" value="${remindTime || '08:00'}">
+        </div>
+      </div>
+    </div>`;
+}
+
 // --------------------------------------------------------
 // Modal-Verwaltung (delegiert an Shared Modal-System)
 // --------------------------------------------------------
 
-function openTaskModal({ task = null, users = [] } = {}, container) {
+function openTaskModal({ task = null, users = [], reminder = null } = {}, container) {
   const isEdit = !!task;
   openSharedModal({
     title: isEdit ? t('tasks.editTask') : t('tasks.newTask'),
-    content: renderModalContent({ task, users }),
+    content: renderModalContent({ task, users, reminder }),
     size: 'lg',
     onSave(panel) {
       // RRULE-Events binden
@@ -408,6 +447,13 @@ function openTaskModal({ task = null, users = [] } = {}, container) {
 
       // Blur-Validierung für required-Felder aktivieren
       wireBlurValidation(panel);
+
+      // Reminder-Toggle: Felder ein-/ausblenden
+      const toggle = panel.querySelector('#reminder-toggle');
+      const fields = panel.querySelector('#reminder-fields');
+      toggle?.addEventListener('change', () => {
+        fields.style.display = toggle.checked ? '' : 'none';
+      });
 
       // Form-Events
       panel.querySelector('#task-form')
@@ -454,13 +500,34 @@ async function handleFormSubmit(e, container) {
   if (form.status) body.status = form.status.value;
 
   try {
+    let savedTaskId = taskId;
     if (taskId) {
       await api.put(`/tasks/${taskId}`, body);
       window.oikos.showToast(t('tasks.savedToast'), 'success');
     } else {
-      await api.post('/tasks', body);
+      const res = await api.post('/tasks', body);
+      savedTaskId = res.data?.id;
       window.oikos.showToast(t('tasks.createdToast'), 'success');
     }
+
+    // Erinnerung speichern oder löschen
+    if (savedTaskId) {
+      const reminderToggle = form.querySelector('#reminder-toggle');
+      const reminderDate   = form.querySelector('#reminder-date')?.value;
+      const reminderTime   = form.querySelector('#reminder-time')?.value || '08:00';
+
+      if (reminderToggle?.checked && reminderDate) {
+        const remindAt = `${reminderDate}T${reminderTime}`;
+        await api.post('/reminders', { entity_type: 'task', entity_id: savedTaskId, remind_at: remindAt });
+        refreshReminders();
+      } else if (!reminderToggle?.checked) {
+        try {
+          await api.delete(`/reminders?entity_type=task&entity_id=${savedTaskId}`);
+          refreshReminders();
+        } catch { /* kein Reminder vorhanden - ignorieren */ }
+      }
+    }
+
     btnSuccess(submitBtn, originalLabel);
     setTimeout(() => closeModal(), 700);
     await loadTasks(container);
@@ -477,6 +544,9 @@ async function handleDeleteTask(id, container) {
   if (!await confirmModal(t('tasks.deleteConfirm'), { danger: true, confirmLabel: t('common.delete') })) return;
   try {
     await api.delete(`/tasks/${id}`);
+    // Erinnerungen für diese Aufgabe ebenfalls entfernen
+    api.delete(`/reminders?entity_type=task&entity_id=${id}`).catch(() => {});
+    refreshReminders();
     closeModal();
     window.oikos.showToast(t('tasks.deletedToast'), 'default');
     await loadTasks(container);
@@ -670,8 +740,11 @@ function wireKanbanDrag(container) {
       const card = e.target.closest('.kanban-card[data-task-id]');
       if (!card) return;
       try {
-        const task = await loadTaskForEdit(card.dataset.taskId);
-        openTaskModal({ task, users: state.users }, container);
+        const [task, reminder] = await Promise.all([
+          loadTaskForEdit(card.dataset.taskId),
+          loadReminderForTask(card.dataset.taskId),
+        ]);
+        openTaskModal({ task, users: state.users, reminder }, container);
       } catch (err) {
         window.oikos.showToast(t('tasks.loadError'), 'danger');
       }
@@ -880,8 +953,11 @@ function wireSwipeGestures(container) {
         resetCard(true);
         vibrate(20);
         try {
-          const task = await loadTaskForEdit(taskId);
-          openTaskModal({ task, users: state.users }, container);
+          const [task, reminder] = await Promise.all([
+            loadTaskForEdit(taskId),
+            loadReminderForTask(taskId),
+          ]);
+          openTaskModal({ task, users: state.users, reminder }, container);
         } catch (err) {
           window.oikos.showToast(t('tasks.loadError'), 'danger');
         }
@@ -1013,8 +1089,11 @@ function wireTaskList(container) {
 
     if (action === 'edit-task' || action === 'open-task') {
       try {
-        const task = await loadTaskForEdit(id);
-        openTaskModal({ task, users: state.users }, container);
+        const [task, reminder] = await Promise.all([
+          loadTaskForEdit(id),
+          loadReminderForTask(id),
+        ]);
+        openTaskModal({ task, users: state.users, reminder }, container);
       } catch (err) {
         window.oikos.showToast(t('tasks.loadError'), 'danger');
       }

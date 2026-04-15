@@ -12,7 +12,7 @@
  *   API: Immer Netzwerk (kein Caching von Nutzerdaten)
  */
 
-const SHELL_CACHE   = 'oikos-shell-v31';
+const SHELL_CACHE   = 'oikos-shell-v32';
 const PAGES_CACHE   = 'oikos-pages-v28';
 const ASSETS_CACHE  = 'oikos-assets-v27';
 const ALL_CACHES    = [SHELL_CACHE, PAGES_CACHE, ASSETS_CACHE];
@@ -31,6 +31,7 @@ const APP_SHELL = [
   '/locales/ar.json',
   '/locales/hi.json',
   '/locales/pt.json',
+  '/reminders.js',
   '/sw-register.js',
   '/lucide.min.js',
   '/styles/tokens.css',
@@ -39,6 +40,7 @@ const APP_SHELL = [
   '/styles/layout.css',
   '/styles/glass.css',
   '/styles/login.css',
+  '/styles/reminders.css',
   '/styles/dashboard.css',
   '/styles/tasks.css',
   '/styles/shopping.css',

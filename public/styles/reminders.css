@@ -1,0 +1,96 @@
+/* --------------------------------------------------------
+   Modul: Erinnerungen (Reminders)
+   Zweck: Bell-Badge in der Navigation, Reminder-Toast-Styling
+   -------------------------------------------------------- */
+
+/* Bell-Badge: Rote Zahl über dem Bell-Icon */
+.nav-item--reminder {
+  position: relative;
+}
+
+.reminder-bell-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-full, 9999px);
+  background: var(--color-priority-urgent, #EF4444);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Reminder-Toast: Bell-Icon + Textblock */
+.toast--reminder {
+  gap: var(--space-2, 8px);
+  cursor: pointer;
+  padding-right: var(--space-2, 8px);
+}
+
+.toast__reminder-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--color-accent, #2563EB);
+}
+
+.toast__reminder-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.toast__reminder-text strong {
+  font-size: var(--text-xs, 0.75rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.toast__reminder-text span {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Reminder-Abschnitt in Modals */
+.reminder-section {
+  border-top: 1px solid var(--color-border, rgba(0,0,0,0.1));
+  padding-top: var(--space-4, 16px);
+  margin-top: var(--space-4, 16px);
+}
+
+.reminder-section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  margin-bottom: var(--space-3, 12px);
+}
+
+.reminder-section__title {
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.reminder-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3, 12px);
+}
+
+@media (max-width: 480px) {
+  .reminder-fields {
+    grid-template-columns: 1fr;
+  }
+}

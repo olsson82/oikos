@@ -6,6 +6,7 @@
 
 import { auth } from '/api.js';
 import { initI18n, getLocale, t } from '/i18n.js';
+import { init as initReminders, stop as stopReminders } from '/reminders.js';
 
 // --------------------------------------------------------
 // Routen-Definitionen
@@ -144,6 +145,7 @@ async function navigate(path, userOrPushState = true, pushState = true) {
     // Überlastung: navigate(path, user) nach Login vs navigate(path, false) beim Init
     if (typeof userOrPushState === 'object' && userOrPushState !== null) {
       currentUser = userOrPushState;
+      initReminders();
     } else {
       pushState = userOrPushState;
     }
@@ -159,6 +161,7 @@ async function navigate(path, userOrPushState = true, pushState = true) {
       try {
         const result = await auth.me();
         currentUser = result.user;
+        initReminders();
       } catch {
         currentPath = null; // Reset damit navigate('/login') nicht geblockt wird
         isNavigating = false;
@@ -507,6 +510,7 @@ window.addEventListener('popstate', (e) => {
 // Session abgelaufen
 window.addEventListener('auth:expired', () => {
   currentUser = null;
+  stopReminders();
   navigate('/login');
 });
 

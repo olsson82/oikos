@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-04-15
+
+### Added
+- Reminders: set time-based reminders on tasks and calendar events (closes #13)
+  - Tasks: enable a reminder with a custom date and time via the task edit modal
+  - Calendar events: choose an offset (at time, 15 min, 1 hour, or 1 day before) via the event edit dialog
+  - In-app toast notifications (built via DOM API, no external dependencies) appear when a reminder is due
+  - Browser Notification API support - reminders fire as system notifications when permission is granted
+  - Client-side polling every 60 seconds checks for pending reminders
+  - Reminders can be dismissed individually; dismissed reminders no longer appear
+  - Bell badge on each reminder shows pending count when reminders are due
+  - DB migration #8 adds `reminders` table with `entity_type`, `entity_id`, `remind_at`, `dismissed` fields and appropriate indexes
+
 ## [0.19.6] - 2026-04-15
 
 ### Added

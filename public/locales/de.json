@@ -597,5 +597,26 @@
     "unitWeeks": "Wochen",
     "unitMonth": "Monat",
     "unitMonths": "Monate"
+  },
+  "reminders": {
+    "sectionTitle": "Erinnerung",
+    "enableLabel": "Erinnerung setzen",
+    "dateLabel": "Datum",
+    "timeLabel": "Uhrzeit",
+    "offsetLabel": "Erinnern",
+    "offsetNone": "Keine",
+    "offset15min": "15 Minuten vorher",
+    "offset1hour": "1 Stunde vorher",
+    "offset1day": "1 Tag vorher",
+    "offsetAtTime": "Zum Startzeitpunkt",
+    "toastTitle": "Erinnerung",
+    "dismiss": "Verwerfen",
+    "notificationPermission": "Browser-Benachrichtigungen",
+    "notificationEnable": "Benachrichtigungen aktivieren",
+    "notificationEnabled": "Benachrichtigungen aktiv",
+    "notificationDenied": "Benachrichtigungen blockiert",
+    "notificationHint": "Erhalte Benachrichtigungen auch wenn die App geöffnet ist.",
+    "pendingBadgeTitle": "{{count}} fällige Erinnerung",
+    "pendingBadgeTitlePlural": "{{count}} fällige Erinnerungen"
   }
 }

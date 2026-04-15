@@ -597,5 +597,26 @@
     "unitWeeks": "weeks",
     "unitMonth": "month",
     "unitMonths": "months"
+  },
+  "reminders": {
+    "sectionTitle": "Reminder",
+    "enableLabel": "Set reminder",
+    "dateLabel": "Date",
+    "timeLabel": "Time",
+    "offsetLabel": "Remind me",
+    "offsetNone": "None",
+    "offset15min": "15 minutes before",
+    "offset1hour": "1 hour before",
+    "offset1day": "1 day before",
+    "offsetAtTime": "At event time",
+    "toastTitle": "Reminder",
+    "dismiss": "Dismiss",
+    "notificationPermission": "Browser notifications",
+    "notificationEnable": "Enable notifications",
+    "notificationEnabled": "Notifications active",
+    "notificationDenied": "Notifications blocked",
+    "notificationHint": "Receive notifications while the app is open.",
+    "pendingBadgeTitle": "{{count}} reminder due",
+    "pendingBadgeTitlePlural": "{{count}} reminders due"
   }
 }

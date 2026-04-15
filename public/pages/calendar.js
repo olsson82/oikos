@@ -10,6 +10,7 @@ import { openModal as openSharedModal, closeModal, confirmModal } from '/compone
 import { stagger } from '/utils/ux.js';
 import { t, formatTime } from '/i18n.js';
 import { esc } from '/utils/html.js';
+import { refresh as refreshReminders } from '/reminders.js';
 
 // --------------------------------------------------------
 // Konstanten
@@ -695,9 +696,10 @@ function showEventPopup(ev, anchor) {
   popup.style.top  = `${Math.max(8, top)}px`;
   popup.style.left = `${Math.max(8, left)}px`;
 
-  popup.querySelector('#popup-edit').addEventListener('click', () => {
+  popup.querySelector('#popup-edit').addEventListener('click', async () => {
     popup.remove();
-    openEventModal({ mode: 'edit', event: ev });
+    const reminder = await loadReminderForEvent(ev.id);
+    openEventModal({ mode: 'edit', event: ev, reminder });
   });
 
   popup.querySelector('#popup-delete').addEventListener('click', async () => {
@@ -718,12 +720,58 @@ function showEventPopup(ev, anchor) {
 }
 
 // --------------------------------------------------------
+// Reminder-Helfer für Kalender-Events
+// --------------------------------------------------------
+
+async function loadReminderForEvent(eventId) {
+  try {
+    const data = await api.get(`/reminders?entity_type=event&entity_id=${eventId}`);
+    return data.data;
+  } catch {
+    return null;
+  }
+}
+
+const REMINDER_OFFSETS = () => [
+  { value: '',     label: t('reminders.offsetNone')   },
+  { value: '0',    label: t('reminders.offsetAtTime') },
+  { value: '15',   label: t('reminders.offset15min')  },
+  { value: '60',   label: t('reminders.offset1hour')  },
+  { value: '1440', label: t('reminders.offset1day')   },
+];
+
+function reminderOffsetFromEvent(event, reminder) {
+  if (!reminder || !event?.start_datetime) return '';
+  const remindMs = new Date(reminder.remind_at).getTime();
+  const startMs  = new Date(event.start_datetime).getTime();
+  const diffMin  = Math.round((startMs - remindMs) / 60000);
+  const opts = [0, 15, 60, 1440];
+  const match = opts.find((o) => o === diffMin);
+  return match !== undefined ? String(match) : '';
+}
+
+function renderCalendarReminderSection(reminder = null, event = null) {
+  const currentOffset = event ? reminderOffsetFromEvent(event, reminder) : '';
+  return `
+    <div class="reminder-section">
+      <div class="form-group" style="margin:0">
+        <label class="form-label" for="modal-reminder-offset">${t('reminders.offsetLabel')}</label>
+        <select class="form-input" id="modal-reminder-offset" style="min-height:44px">
+          ${REMINDER_OFFSETS().map((o) =>
+            `<option value="${o.value}" ${currentOffset === o.value ? 'selected' : ''}>${esc(o.label)}</option>`
+          ).join('')}
+        </select>
+      </div>
+    </div>`;
+}
+
+// --------------------------------------------------------
 // Event-Modal (Erstellen / Bearbeiten)
 // --------------------------------------------------------
 
-function openEventModal({ mode, event = null, date = null }) {
+function openEventModal({ mode, event = null, date = null, reminder = null }) {
   const isEdit = mode === 'edit';
-  const content = buildEventModalContent({ mode, event, date });
+  const content = buildEventModalContent({ mode, event, date, reminder });
 
   openSharedModal({
     title: isEdit ? t('calendar.editEvent') : t('calendar.newEvent'),
@@ -764,12 +812,12 @@ function openEventModal({ mode, event = null, date = null }) {
         await deleteEvent(event.id);
       });
 
-      panel.querySelector('#modal-save').addEventListener('click', () => saveEvent(panel, mode, event?.id));
+      panel.querySelector('#modal-save').addEventListener('click', () => saveEvent(panel, mode, event?.id, reminder));
     },
   });
 }
 
-function buildEventModalContent({ mode, event, date }) {
+function buildEventModalContent({ mode, event, date, reminder = null }) {
   const isEdit = mode === 'edit';
   const today  = date || state.today;
 
@@ -867,6 +915,8 @@ function buildEventModalContent({ mode, event, date }) {
 
     ${renderRRuleFields('event', isEdit ? event.recurrence_rule : null)}
 
+    ${renderCalendarReminderSection(reminder, event)}
+
     <div class="modal-panel__footer" style="border:none;padding:0;margin-top:var(--space-4)">
       ${isEdit ? `<button class="btn btn--danger btn--icon" id="modal-delete" aria-label="${t('calendar.deleteEvent')}">
         <i data-lucide="trash-2" style="width:16px;height:16px;" aria-hidden="true"></i>
@@ -878,7 +928,7 @@ function buildEventModalContent({ mode, event, date }) {
     </div>`;
 }
 
-async function saveEvent(overlay, mode, eventId) {
+async function saveEvent(overlay, mode, eventId, existingReminder = null) {
   const saveBtn = overlay.querySelector('#modal-save');
   const title   = overlay.querySelector('#modal-title').value.trim();
 
@@ -922,13 +972,33 @@ async function saveEvent(overlay, mode, eventId) {
       recurrence_rule: rrule.recurrence_rule,
     };
 
+    let savedEventId = eventId;
     if (mode === 'create') {
       const res = await api.post('/calendar', body);
       state.events.push(res.data);
+      savedEventId = res.data?.id;
     } else {
       const res = await api.put(`/calendar/${eventId}`, body);
       const idx = state.events.findIndex((e) => e.id === eventId);
       if (idx !== -1) state.events[idx] = res.data;
+    }
+
+    // Erinnerung speichern oder löschen
+    if (savedEventId) {
+      const offsetSel = overlay.querySelector('#modal-reminder-offset');
+      const offsetVal = offsetSel?.value;
+
+      if (offsetVal !== '' && offsetVal !== undefined) {
+        // Remind-Zeitpunkt = start_datetime - offset (in Minuten)
+        const startMs  = new Date(start_datetime).getTime();
+        const offsetMs = parseInt(offsetVal, 10) * 60000;
+        const remindAt = new Date(startMs - offsetMs).toISOString().slice(0, 16);
+        await api.post('/reminders', { entity_type: 'event', entity_id: savedEventId, remind_at: remindAt });
+        refreshReminders();
+      } else {
+        api.delete(`/reminders?entity_type=event&entity_id=${savedEventId}`).catch(() => {});
+        refreshReminders();
+      }
     }
 
     closeModal();
@@ -944,6 +1014,8 @@ async function saveEvent(overlay, mode, eventId) {
 async function deleteEvent(id) {
   try {
     await api.delete(`/calendar/${id}`);
+    api.delete(`/reminders?entity_type=event&entity_id=${id}`).catch(() => {});
+    refreshReminders();
     state.events = state.events.filter((e) => e.id !== id);
     renderView();
     window.oikos?.showToast(t('calendar.deletedToast'), 'success');
