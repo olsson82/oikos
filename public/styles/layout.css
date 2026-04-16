@@ -17,6 +17,10 @@
 .app-shell {
   display: flex;
   flex-direction: column;
+  /* -webkit-fill-available als iOS-Fallback: In manchen iOS-WebKit-Versionen
+   * ist 100dvh minimal kleiner als die tatsächliche WKWebView-Höhe, was zu einem
+   * sichtbaren Streifen unten führt. -webkit-fill-available füllt zuverlässig. */
+  height: -webkit-fill-available;
   height: 100dvh;
 }
 

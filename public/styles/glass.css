@@ -349,7 +349,8 @@ textarea.form-input {
     transform var(--transition-base) var(--ease-out),
     background-color var(--transition-fast),
     box-shadow var(--transition-fast);
-  will-change: transform;
+  /* will-change: transform absichtlich weggelassen - auf iOS (WebKit) korrumpiert die
+   * dauerhafte GPU-Layer-Promotion eines position:relative Flex-Kinds dessen Position. */
 }
 
 .nav-bottom--hidden {

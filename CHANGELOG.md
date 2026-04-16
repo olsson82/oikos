@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.5] - 2026-04-16
+
+### Fixed
+- iOS PWA: persistent gap between the bottom navigation bar and the physical screen edge. Two root causes addressed: (1) `will-change: transform` on the flex-child nav caused iOS WebKit's compositor to misplace the GPU layer — removed permanently; CSS `transform` transitions work with hardware acceleration on modern iOS without this hint. (2) Added `-webkit-fill-available` as a height fallback before `100dvh` on `.app-shell` to guard against iOS WebKit versions where `100dvh` is computed slightly smaller than the actual WKWebView height.
+
 ## [0.20.4] - 2026-04-16
 
 ### Fixed
