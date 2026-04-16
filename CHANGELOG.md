@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.2] - 2026-04-16
+
+### Fixed
+- iOS PWA: "Dashboard kann nicht geladen werden" toast after opening the PWA due to an `auth:expired` race condition. When the session cookie was cleared by iOS between opens, the 401 response triggered `auth:expired` while navigation was still in progress (`isNavigating=true`), causing the redirect to `/login` to be silently dropped. A `_pendingLoginRedirect` flag now defers the redirect until navigation completes.
+- SW cache bumped (shell v34, pages v29) to force iOS devices to pick up the previous CSRF fix that may still have been served from stale cache.
+
 ## [0.20.1] - 2026-04-15
 
 ### Fixed
