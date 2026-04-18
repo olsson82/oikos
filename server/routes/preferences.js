@@ -15,7 +15,7 @@ const router = express.Router();
 const VALID_MEAL_TYPES = ['breakfast', 'lunch', 'dinner', 'snack'];
 const DEFAULT_MEAL_TYPES = VALID_MEAL_TYPES.join(',');
 
-const VALID_CURRENCIES = ['EUR', 'USD', 'GBP', 'SEK', 'NOK', 'DKK', 'CHF', 'CNY', 'PLN', 'CZK', 'HUF', 'JPY', 'AUD', 'CAD', 'TRY', 'RUB'];
+const VALID_CURRENCIES = ['AED', 'AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HUF', 'INR', 'JPY', 'NOK', 'PLN', 'RUB', 'SAR', 'SEK', 'TRY', 'UAH', 'USD'];
 const DEFAULT_CURRENCY = 'EUR';
 
 const VALID_WIDGET_IDS = ['weather', 'tasks', 'calendar', 'shopping', 'meals', 'notes'];

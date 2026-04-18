@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.9] - 2026-04-18
+
+### Added
+- Ukrainian (uk) translation (closes #52)
+- Ukrainian Hryvnia (UAH) currency option in budget settings
+- Shopping list category names are now translated in the settings panel; rename and delete dialogs also use the translated name
+
+### Fixed
+- Server-side `VALID_CURRENCIES` now matches the frontend list — `AED`, `BRL`, `INR`, and `SAR` were accepted by the UI but rejected by the API
+
 ## [0.20.8] - 2026-04-18
 
 ### Changed

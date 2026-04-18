@@ -10,8 +10,24 @@ import { t, formatDate, formatTime } from '/i18n.js';
 import { esc } from '/utils/html.js';
 import '/components/oikos-locale-picker.js';
 
-const SUPPORTED_CURRENCIES = ['AED', 'AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HUF', 'INR', 'JPY', 'NOK', 'PLN', 'RUB', 'SAR', 'SEK', 'TRY', 'USD'];
+const SUPPORTED_CURRENCIES = ['AED', 'AUD', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP', 'HUF', 'INR', 'JPY', 'NOK', 'PLN', 'RUB', 'SAR', 'SEK', 'TRY', 'UAH', 'USD'];
 const SETTINGS_TAB_KEY = 'oikos:settings:tab';
+
+const CATEGORY_I18N = {
+  'Obst & Gemüse': 'shopping.catFruitVeg',
+  'Backwaren': 'shopping.catBakery',
+  'Milchprodukte': 'shopping.catDairy',
+  'Fleisch & Fisch': 'shopping.catMeatFish',
+  'Tiefkühl': 'shopping.catFrozen',
+  'Getränke': 'shopping.catDrinks',
+  'Haushalt': 'shopping.catHousehold',
+  'Drogerie': 'shopping.catDrugstore',
+  'Sonstiges': 'shopping.catMisc',
+};
+function catLabel(name) {
+  const key = CATEGORY_I18N[name];
+  return key ? t(key) : name;
+}
 
 function buildCurrencyOptions(selected) {
   const display = typeof Intl.DisplayNames !== 'undefined'
@@ -671,7 +687,7 @@ function categoryRowHtml(cat, isFirst, isLast) {
   return `
     <li class="cat-row" data-cat-id="${cat.id}">
       <i data-lucide="${esc(cat.icon)}" class="cat-row__icon" aria-hidden="true"></i>
-      <span class="cat-row__name" data-action="rename-cat" title="${t('settings.shoppingCategoryRenameHint')}">${esc(cat.name)}</span>
+      <span class="cat-row__name" data-action="rename-cat" title="${t('settings.shoppingCategoryRenameHint')}">${esc(catLabel(cat.name))}</span>
       <div class="cat-row__actions">
         <button class="btn btn--icon btn--ghost" data-action="move-cat-up" data-id="${cat.id}"
                 aria-label="${t('settings.shoppingCategoryMoveUp')}"
@@ -746,7 +762,7 @@ function bindCategoryEvents(container) {
       const cat = cats.find((c) => c.id === id);
       if (!cat) return;
       const { promptModal } = await import('/components/modal.js');
-      const newName = await promptModal(t('settings.shoppingCategoryRenamePrompt'), cat.name);
+      const newName = await promptModal(t('settings.shoppingCategoryRenamePrompt'), catLabel(cat.name));
       if (!newName || newName === cat.name) return;
       try {
         const res = await api.put(`/shopping/categories/${id}`, { name: newName });
@@ -788,7 +804,7 @@ function bindCategoryEvents(container) {
       if (!cat) return;
       const { confirmModal: confirmDel } = await import('/components/modal.js');
       if (!await confirmDel(
-        t('settings.shoppingCategoryDeleteConfirm', { name: cat.name }),
+        t('settings.shoppingCategoryDeleteConfirm', { name: catLabel(cat.name) }),
         { danger: true, confirmLabel: t('common.delete') }
       )) return;
       try {
