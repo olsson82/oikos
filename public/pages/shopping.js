@@ -9,6 +9,7 @@ import { stagger, vibrate } from '/utils/ux.js';
 import { t } from '/i18n.js';
 import { esc } from '/utils/html.js';
 import { promptModal, confirmModal } from '/components/modal.js';
+import { DEFAULT_CATEGORY_NAME, categoryLabel } from '/utils/shopping-categories.js';
 
 // --------------------------------------------------------
 // Konstanten
@@ -18,25 +19,6 @@ import { promptModal, confirmModal } from '/components/modal.js';
 const SWIPE_THRESHOLD = 80;   // px - Mindestweg für Aktion
 const SWIPE_MAX_VERT  = 12;   // px - vertikaler Toleranzbereich
 const SWIPE_LOCK_VERT = 30;   // px - ab diesem Weg gilt es als Scroll
-
-// Übersetzungs-Map für die Standard-Kategorien (DB-Name → i18n-Key)
-const DEFAULT_CATEGORY_I18N = {
-  'Obst & Gemüse':   'shopping.catFruitVeg',
-  'Backwaren':       'shopping.catBakery',
-  'Milchprodukte':   'shopping.catDairy',
-  'Fleisch & Fisch': 'shopping.catMeatFish',
-  'Tiefkühl':        'shopping.catFrozen',
-  'Getränke':        'shopping.catDrinks',
-  'Haushalt':        'shopping.catHousehold',
-  'Drogerie':        'shopping.catDrugstore',
-  'Sonstiges':       'shopping.catMisc',
-};
-
-/** Übersetzten Label für eine Kategorie zurückgeben. */
-function catLabel(name) {
-  const key = DEFAULT_CATEGORY_I18N[name];
-  return key ? t(key) : name;
-}
 
 /** Icon für eine Kategorie (aus state.categories, Fallback 'tag'). */
 function catIcon(name) {
@@ -67,7 +49,7 @@ const state = {
 function groupItemsByCategory(items) {
   const grouped = {};
   for (const item of items) {
-    const cat = item.category || (state.categories[0]?.name ?? 'Sonstiges');
+    const cat = item.category || (state.categories[0]?.name ?? DEFAULT_CATEGORY_NAME);
     (grouped[cat] = grouped[cat] || []).push(item);
   }
   // In DB-Reihenfolge zurückgeben; unbekannte Kategorien ans Ende
@@ -157,7 +139,7 @@ function renderListContent(container) {
           <div class="autocomplete-dropdown" id="autocomplete-dropdown" hidden></div>
         </div>
         <select class="quick-add__cat" id="item-cat-select" aria-label="${t('shopping.categoryLabel')}">
-          ${state.categories.map((c) => `<option value="${esc(c.name)}">${esc(catLabel(c.name))}</option>`).join('')}
+          ${state.categories.map((c) => `<option value="${esc(c.name)}">${esc(categoryLabel(c.name))}</option>`).join('')}
         </select>
         <button class="quick-add__btn" type="submit" aria-label="${t('shopping.addItemLabel')}">
           <i data-lucide="plus" style="width:20px;height:20px" aria-hidden="true"></i>
@@ -196,7 +178,7 @@ function renderItems() {
     <div class="item-category">
       <div class="item-category__header">
         <i data-lucide="${catIcon(cat)}" class="item-category__icon" aria-hidden="true"></i>
-        ${esc(catLabel(cat))}
+        ${esc(categoryLabel(cat))}
       </div>
       ${items.map(renderItem).join('')}
     </div>`).join('');

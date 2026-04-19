@@ -9,6 +9,7 @@ import { openModal as openSharedModal, closeModal as closeSharedModal, selectMod
 import { stagger } from '/utils/ux.js';
 import { t, formatDate } from '/i18n.js';
 import { esc } from '/utils/html.js';
+import { DEFAULT_CATEGORY_NAME, categoryLabel } from '/utils/shopping-categories.js';
 
 // --------------------------------------------------------
 // Konstanten
@@ -25,6 +26,8 @@ const DAY_NAMES = () => [
   t('meals.dayMo'), t('meals.dayDi'), t('meals.dayMi'), t('meals.dayDo'),
   t('meals.dayFr'), t('meals.daySa'), t('meals.daySo'),
 ];
+
+const EXCLUDED_MEAL_CATEGORY_NAMES = new Set(['Haushalt', 'Drogerie', 'Sonstiges']);
 
 // --------------------------------------------------------
 // State
@@ -71,6 +74,10 @@ function isToday(dateStr) {
 
 function formatDayDate(dateStr) {
   return formatDate(dateStr);
+}
+
+function mealCategories() {
+  return state.categories.filter((c) => !EXCLUDED_MEAL_CATEGORY_NAMES.has(c.name));
 }
 
 // --------------------------------------------------------
@@ -564,7 +571,7 @@ function buildModalContent({ mode, date, mealType, meal }) {
     : `<option value="" disabled>${t('meals.noShoppingLists')}</option>`;
 
   const ingRows = isEdit && meal.ingredients?.length
-    ? meal.ingredients.map((ing) => ingredientRowHTML(ing.name, ing.quantity ?? '', ing.id, ing.category ?? 'Sonstiges')).join('')
+    ? meal.ingredients.map((ing) => ingredientRowHTML(ing.name, ing.quantity ?? '', ing.id, ing.category ?? DEFAULT_CATEGORY_NAME)).join('')
     : '';
 
   const hasIngOpen = isEdit && meal.ingredients?.some((i) => !i.on_shopping_list);
@@ -630,10 +637,14 @@ function buildModalContent({ mode, date, mealType, meal }) {
     </div>`;
 }
 
-function ingredientRowHTML(name, qty, id, category = 'Sonstiges') {
-  const catOptions = state.categories.length
-    ? state.categories.map((c) => `<option value="${esc(c.name)}" ${c.name === category ? 'selected' : ''}>${esc(c.name)}</option>`).join('')
-    : `<option value="Sonstiges" selected>${t('meals.ingredientCategoryDefault')}</option>`;
+function ingredientRowHTML(name, qty, id, category = DEFAULT_CATEGORY_NAME) {
+  const availableCategories = mealCategories();
+  const resolvedCategory = availableCategories.some((c) => c.name === category)
+    ? category
+    : (availableCategories[0]?.name ?? DEFAULT_CATEGORY_NAME);
+  const catOptions = availableCategories.length
+    ? availableCategories.map((c) => `<option value="${esc(c.name)}" ${c.name === resolvedCategory ? 'selected' : ''}>${esc(categoryLabel(c.name))}</option>`).join('')
+    : `<option value="${DEFAULT_CATEGORY_NAME}" selected>${t('meals.ingredientCategoryDefault')}</option>`;
 
   return `
     <div class="ingredient-row" data-ing-id="${id ?? ''}">
@@ -669,7 +680,7 @@ async function saveModal(overlay) {
   overlay.querySelectorAll('.ingredient-row').forEach((row) => {
     const name     = row.querySelector('.ingredient-row__name').value.trim();
     const qty      = row.querySelector('.ingredient-row__qty').value.trim() || null;
-    const category = row.querySelector('.ingredient-row__cat')?.value || 'Sonstiges';
+    const category = row.querySelector('.ingredient-row__cat')?.value || DEFAULT_CATEGORY_NAME;
     if (name) ingredients.push({ name, quantity: qty, category, id: row.dataset.ingId || null });
   });
 
