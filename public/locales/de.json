@@ -330,7 +330,8 @@
     "dayLongSaturday": "Samstag",
     "timeSuffix": "Uhr",
     "ics": {
-      "reset": "Auf Original zurücksetzen"
+      "reset": "Auf Original zurücksetzen",
+      "resetToast": "Änderungen zurückgesetzt."
     }
   },
   "notes": {

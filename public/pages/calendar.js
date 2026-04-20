@@ -689,7 +689,7 @@ function showEventPopup(ev, anchor) {
   document.body.appendChild(popup);
   if (window.lucide) lucide.createIcons();
 
-  if (ev.external_source === 'ics' && ev.user_modified) {
+  if (ev.external_source === 'ics' && ev.user_modified === 1) {
     const resetLink = document.createElement('a');
     resetLink.href = '#';
     resetLink.className = 'event-popup__reset-link';
@@ -701,7 +701,7 @@ function showEventPopup(ev, anchor) {
         await api.post(`/calendar/${ev.id}/reset`, {});
         popup.remove();
         await reloadForView();
-        window.oikos?.showToast(t('calendar.ics.reset'), 'success');
+        window.oikos?.showToast(t('calendar.ics.resetToast'), 'success');
       } catch (err) {
         window.oikos?.showToast(err.message, 'danger');
       }
