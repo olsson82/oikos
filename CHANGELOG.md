@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.29] - 2026-04-20
+
+### Changed
+- Dark mode now uses a blue-tinted color palette (Option B): background `#0F1117`, surfaces `#161A26`/`#1E2336`, sidebar `#0B0D14` — creates stronger visual hierarchy and complements the Indigo accent
+
+### Fixed
+- Defined missing CSS tokens `--color-surface-elevated` and `--color-surface-hover` used by More-Sheet items, Search overlay inputs and results (previously transparent/invisible backgrounds)
+
 ## [0.20.28] - 2026-04-20
 
 ### Fixed
