@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.35] - 2026-04-20
+
+### Changed
+- Extracted ICS parser functions (`unfoldLines`, `parseICS`, `formatICSDate`, `tzLocalToUTC`, `applyDuration`) from `apple-calendar.js` into a new shared module `server/services/ics-parser.js`, plus a new `expandRRULE` helper — pure refactor, no logic changes
+- Added `test:ics-parser` test suite covering line unfolding, all-day/UTC event parsing, and RRULE expansion
+
 ## [0.20.34] - 2026-04-20
 
 ### Fixed
