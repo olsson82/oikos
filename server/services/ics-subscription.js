@@ -20,7 +20,7 @@ const FETCH_TIMEOUT_MS          = 15_000;
 
 const PRIVATE_RANGES = [
   /^127\./, /^10\./, /^172\.(1[6-9]|2\d|3[01])\./, /^192\.168\./,
-  /^169\.254\./, /^::1$/, /^fc/i, /^fe[89ab]/i,
+  /^169\.254\./, /^::1$/, /^f[cd]/i, /^fe[89ab]/i,
 ];
 
 const syncingNow = new Set();
