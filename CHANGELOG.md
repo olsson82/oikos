@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.37] - 2026-04-20
+
+### Added
+- `server/services/ics-subscription.js`: core ICS subscription service with SSRF-protected fetch (DNS pre-resolution against private IP ranges), ETag/Last-Modified conditional fetching, 10 MB response size limit, 15 s timeout, webcal:// → https:// normalization, RRULE expansion via sync window (−6 / +12 months), upsert-on-conflict with `user_modified` guard, stale-event cleanup via `json_each`, and in-memory mutex to prevent concurrent syncs of the same subscription
+
 ## [0.20.36] - 2026-04-20
 
 ### Added
