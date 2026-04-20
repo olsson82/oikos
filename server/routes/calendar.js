@@ -190,8 +190,14 @@ router.get('/upcoming', (req, res) => {
         OR
         (e.recurrence_rule IS NOT NULL AND DATE(e.start_datetime) <= ?)
       )
+      AND (
+        e.external_source != 'ics'
+        OR e.subscription_id IN (
+          SELECT id FROM ics_subscriptions WHERE shared = 1 OR created_by = ?
+        )
+      )
       ORDER BY e.start_datetime ASC
-    `).all(nowDate, future, future);
+    `).all(nowDate, future, future, req.session.userId);
 
     const expanded = expandRecurringEvents(rawEvents, nowDate, future)
       .filter((e) => e.start_datetime >= new Date().toISOString())
