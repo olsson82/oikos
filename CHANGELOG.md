@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.20.33] - 2026-04-20
 
 ### Fixed
-- Min/Max Temperature Aggregation for Forecast in Weather Widget
+- Weather widget: forecast min/max temperatures are now aggregated across all 3-hour intervals of each day instead of reading `temp_min`/`temp_max` from a single snapshot — the OWM free-tier `/forecast` endpoint reports near-identical values per 3h window, so min and max were always the same; icon and description still use the noon entry (12:00, fallback 15:00)
 
 ## [0.20.32] - 2026-04-20
 
