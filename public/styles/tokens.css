@@ -130,6 +130,16 @@
   --_color-info-light:    #DDF4FF;
   --color-info-light:     var(--_color-info-light);
 
+  /* Toast-Textfarben: weiß auf dunklen semantischen Bg (light mode).
+   * Dark mode überschreibt auf dunkel, weil --color-success/warning/danger
+   * dort vivid/hell sind und weißen Text unleserlich machen würden. */
+  --_toast-success-text: var(--color-text-on-accent);
+  --toast-success-text:  var(--_toast-success-text);
+  --_toast-warning-text: var(--color-text-on-accent);
+  --toast-warning-text:  var(--_toast-warning-text);
+  --_toast-danger-text:  var(--color-text-on-accent);
+  --toast-danger-text:   var(--_toast-danger-text);
+
   /* --------------------------------------------------------
    * 4. Farben - Modul-Akzente
    *    Jedes Modul hat eine eigene dezente Akzentfarbe.
@@ -475,6 +485,11 @@
     --_color-danger-light:  #3D1C1A;
     --_color-info-light:    #1A2D40;
 
+    /* Toast: dunkler Text auf vividen Farben (#4ADE80, #F59E0B, #FCA5A5) */
+    --_toast-success-text: #062010;   /* 13.6:1 auf #4ADE80 */
+    --_toast-warning-text: #291400;   /* 13.1:1 auf #F59E0B */
+    --_toast-danger-text:  #330808;   /* 15.1:1 auf #FCA5A5 */
+
     --_module-dashboard: #818CF8;
     --_module-tasks:     #4ADE80;
     --_module-calendar:  #A78BFA;
@@ -569,6 +584,11 @@
     --_color-warning-light: #332400;
     --_color-danger-light:  #3D1C1A;
     --_color-info-light:    #1A2D40;
+
+    /* Toast: dunkler Text auf vividen Farben (#4ADE80, #F59E0B, #FCA5A5) */
+    --_toast-success-text: #062010;   /* 13.6:1 auf #4ADE80 */
+    --_toast-warning-text: #291400;   /* 13.1:1 auf #F59E0B */
+    --_toast-danger-text:  #330808;   /* 15.1:1 auf #FCA5A5 */
 
     /* Modul-Akzente (Entflechtung Meals/Shopping spiegelt Light-Mode) */
     --_module-dashboard: #818CF8;   /* Indigo-400 */

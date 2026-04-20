@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.31] - 2026-04-20
+
+### Fixed
+- Toast success/warning/danger now use dark text in dark mode — previously white text on vivid lime/amber/pink backgrounds had contrast ratios of ~1.3–1.5:1 (unreadable); now 13–15:1 (WCAG AAA)
+- List stagger animation tapers naturally (35→30→25→22→18→15→12→9→7ms steps) and covers 9 items before capping, replacing the abrupt constant 175ms from item 6 onward
+
 ## [0.20.30] - 2026-04-20
 
 ### Changed

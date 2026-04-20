@@ -1629,9 +1629,9 @@
   opacity: 1;
 }
 
-.toast--success { background-color: var(--color-success); color: var(--color-text-on-accent); }
-.toast--danger  { background-color: var(--color-danger);  color: var(--color-text-on-accent); }
-.toast--warning { background-color: var(--color-warning); color: var(--color-text-on-accent); }
+.toast--success { background-color: var(--color-success); color: var(--toast-success-text); }
+.toast--danger  { background-color: var(--color-danger);  color: var(--toast-danger-text); }
+.toast--warning { background-color: var(--color-warning); color: var(--toast-warning-text); }
 
 @keyframes toast-in {
   from { opacity: 0; transform: translateY(6px) scale(0.98); }
@@ -1847,12 +1847,16 @@
   animation: list-item-in 0.2s var(--ease-out) both;
 }
 
-.list-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.list-stagger > *:nth-child(2) { animation-delay: 35ms; }
-.list-stagger > *:nth-child(3) { animation-delay: 70ms; }
-.list-stagger > *:nth-child(4) { animation-delay: 105ms; }
-.list-stagger > *:nth-child(5) { animation-delay: 140ms; }
-.list-stagger > *:nth-child(n+6) { animation-delay: 175ms; }
+.list-stagger > *:nth-child(1)   { animation-delay: 0ms; }
+.list-stagger > *:nth-child(2)   { animation-delay: 35ms; }
+.list-stagger > *:nth-child(3)   { animation-delay: 65ms; }
+.list-stagger > *:nth-child(4)   { animation-delay: 90ms; }
+.list-stagger > *:nth-child(5)   { animation-delay: 112ms; }
+.list-stagger > *:nth-child(6)   { animation-delay: 130ms; }
+.list-stagger > *:nth-child(7)   { animation-delay: 145ms; }
+.list-stagger > *:nth-child(8)   { animation-delay: 157ms; }
+.list-stagger > *:nth-child(9)   { animation-delay: 166ms; }
+.list-stagger > *:nth-child(n+10) { animation-delay: 173ms; }
 
 /* --------------------------------------------------------
  * Swipe Affordance Hint
