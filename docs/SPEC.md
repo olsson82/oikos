@@ -285,45 +285,96 @@ User management and app configuration. Logged-in users only.
 
 ### Colors (CSS Custom Properties)
 
-Source of truth: `public/styles/tokens.css`. Key values:
+Source of truth: `public/styles/tokens.css`. Key values (as of v0.20.39):
+
+**Palette rationale:** Warm-tinted neutral scale (`#FAFAF8 → #121211`) anchored by an **Indigo-600 primary** (`#4F46E5`) that harmonises with the Calendar module violet and the secondary accent. Module colors are semantically separated from severity colors — no hue shared without explicit documentation in `tokens.css`.
 
 ```css
 :root {
-  --color-bg: #F5F5F7;
-  --color-surface: #FFFFFF;
-  --color-border: #E5E5EA;
-  --color-text-primary: #1C1C1E;
-  --color-text-secondary: #8E8E93;
-  --color-text-tertiary: #6B6B68;      /* WCAG AA on --color-bg */
-  --color-accent: #2563EB;
-  --color-accent-deep: #1E5CB3;
-  --color-accent-light: #EEF2FF;
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger: #DC2626;
-  --color-info: #0969DA;               /* WCAG AA on white */
-  /* Glass layer tokens (Section 16): */
+  /* Neutral canvas — warm linen/unbleached-paper atmosphere */
+  --color-bg:              #F5F4F1;   /* neutral-100 */
+  --color-surface:         #FFFFFF;
+  --color-border:          #E8E7E2;   /* neutral-200 */
+  --color-text-primary:    #1C1C1A;   /* neutral-900, 14.7:1 on bg */
+  --color-text-secondary:  #6C6B67;   /* neutral-600, 5.0:1 on white */
+  --color-text-tertiary:   #6A6964;   /* 4.61:1 on bg */
+
+  /* Primary accent — Indigo (warm bias, harmonises with Calendar/violet) */
+  --color-accent:           #4F46E5;  /* Indigo-600, 4.93:1 on white (AA) */
+  --color-accent-hover:     #4338CA;  /* Indigo-700, 7.04:1 (AAA) */
+  --color-accent-active:    #3730A3;  /* Indigo-800 */
+  --color-accent-deep:      #2E2D82;  /* deep Indigo for gradients/weather */
+  --color-accent-secondary: #7C5CFC;  /* violet — logo gradient, same Indigo family */
+  --color-accent-light:     #EEF2FF;  /* Indigo-50 */
+  --color-accent-subtle:    #E0E7FF;  /* Indigo-100 */
+  --color-btn-primary:      #4338CA;  /* Indigo-700, 7.04:1 on white (AAA) */
+  --color-btn-primary-hover:#3730A3;
+
+  /* Severity — hue-separated from module colors */
+  --color-success:       #15803D;     /* 4.54:1 */
+  --color-warning:       #A15C0A;     /* 5.23:1 — Amber, distinct from --module-meals */
+  --color-danger:        #B91C1C;     /* Red-700, 6.90:1 (AAA) */
+  --color-info:          #0969DA;     /* 4.64:1 */
+
+  /* Module accents — domain-specific, not interchangeable with severity */
+  --module-dashboard:  #4F46E5;   /* Indigo — follows primary accent */
+  --module-tasks:      #15803D;   /* Green — intentional share with --color-success */
+  --module-calendar:   #8250DF;   /* Violet */
+  --module-meals:      #C2410C;   /* Orange-700 */
+  --module-shopping:   #DB2777;   /* Pink-600 — distinct from Meals/Warning */
+  --module-notes:      #CA8A04;   /* Gold, 4.08:1 — icons/large-text only */
+  --module-contacts:   #0969DA;   /* Blue — distinct from Indigo primary */
+  --module-budget:     #0F766E;   /* Teal-700, 5.11:1 */
+  --module-settings:   #6E7781;   /* Neutral grey */
+
+  /* Priority */
+  --color-priority-medium: #A16207;  /* Amber-700, 6.3:1 — distinct from Warning+Meals */
+  --color-priority-high:   #C2410C;  /* = --module-meals (documented share: "hot") */
+  --color-priority-urgent: #B91C1C;  /* = --color-danger (documented share: "destructive") */
+
+  /* Glass layer tokens */
   --glass-bg: rgba(255,255,255,0.72);
   --glass-border: rgba(255,255,255,0.55);
   --blur-md: 16px;
   --radius-glass-button: 9999px;       /* capsule */
   --ease-glass: cubic-bezier(0.34, 1.56, 0.64, 1); /* spring */
 
-  /* Glass Vibrancy tokens (Phase 4): */
-  --glass-bg-card: rgba(255,255,255,0.52);     /* transparent for vibrancy */
+  /* Glass Vibrancy tokens (Phase 4) */
+  --glass-bg-card: rgba(255,255,255,0.52);
   --glass-bg-card-hover: rgba(255,255,255,0.65);
   --glass-bg-input: rgba(255,255,255,0.48);
   --glass-bg-toolbar: rgba(255,255,255,0.58);
-  --glass-tint-strength: 6%;                   /* module accent tint */
+  --glass-tint-strength: 6%;
+
+  /* Glass inset specular highlights */
+  --glass-inset-soft:     inset 0 1px 0 rgba(255,255,255,0.18);
+  --glass-inset-base:     inset 0 1px 0 rgba(255,255,255,0.20);
+  --glass-inset-medium:   inset 0 1px 0 rgba(255,255,255,0.22);
+  --glass-inset-elevated: inset 0 1px 0 rgba(255,255,255,0.28);
+  --glass-inset-strong:   inset 0 1px 0 rgba(255,255,255,0.32);
 }
 
+/* Dark mode — Hue preserved (Indigo-400), only Lightness/Saturation adjusted.
+   Private --_name tokens prevent duplication between @media and [data-theme]. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #111110;
-    --color-surface: #1C1C1A;
+    --color-bg: #1A1A18;       /* deep warm */
+    --color-surface: #222220;
     --color-border: #2C2C2A;
-    --color-text-primary: #F5F5F3;
-    --color-text-secondary: #8E8E8C;
+    --color-text-primary: #F5F4F1;
+    --color-text-secondary: #AEADB0;
+    --color-accent:            #818CF8;  /* Indigo-400, 6.8:1 on dark surface */
+    --color-accent-hover:      #6366F1;  /* Indigo-500 */
+    --color-accent-active:     #4F46E5;  /* Indigo-600 — mirrors light primary */
+    --color-accent-light:      #2E2D5B;
+    --color-accent-subtle:     #252255;
+    --color-btn-primary:       #6366F1;  /* 5.5:1 */
+    --color-btn-primary-hover: #4F46E5;
+    --module-dashboard: #818CF8;
+    --module-meals:     #FB923C;  /* Orange-400 */
+    --module-shopping:  #F472B6;  /* Pink-400 — mirrors light entanglement */
+    --module-budget:    #2DD4BF;  /* Teal-400 */
+    --meal-dinner:      #818CF8;
     --glass-bg: rgba(28,28,26,0.75);
     --glass-border: rgba(255,255,255,0.12);
     --glass-bg-card: rgba(38,38,36,0.50);

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.40] - 2026-04-21
+
+### Changed
+- `docs/SPEC.md` Design System → Colors: replaced outdated code block with current Indigo-based palette (`#4F46E5` primary, module color semantics, priority/severity separation, dark mode Indigo-400 accent, `--glass-inset-*` specular tokens); added palette rationale and WCAG contrast notes inline
+
 ## [0.20.39] - 2026-04-21
 
 ### Changed
