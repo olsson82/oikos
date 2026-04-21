@@ -153,6 +153,8 @@ function requireAdmin(req, res, next) {
 // Routen
 // --------------------------------------------------------
 
+const avatarColors = ['#007AFF', '#34C759', '#FF9500', '#FF3B30', '#AF52DE', '#FF2D55'];
+
 /**
  * POST /api/v1/auth/login
  * Body: { username: string, password: string }
@@ -231,6 +233,56 @@ router.post('/logout', requireAuth, csrfMiddleware, (req, res) => {
     res.clearCookie('oikos.sid');
     res.json({ ok: true });
   });
+});
+
+/**
+ * POST /api/v1/auth/setup
+ * First-run bootstrap: creates the first admin when no users exist.
+ * Returns 403 if any user already exists.
+ * Body: { username: string, display_name: string, password: string }
+ * Response: { user: { id, username, display_name, avatar_color, role } }
+ */
+router.post('/setup', loginLimiter, async (req, res) => {
+  try {
+    const { count } = db.get().prepare('SELECT COUNT(*) as count FROM users').get();
+    if (count > 0) {
+      return res.status(403).json({ error: 'Setup bereits abgeschlossen.', code: 403 });
+    }
+
+    const username = (req.body.username || '').trim();
+    const display_name = (req.body.display_name || '').trim();
+    const { password } = req.body;
+
+    if (!username || !display_name || !password) {
+      return res.status(400).json({ error: 'Benutzername, Anzeigename und Passwort erforderlich.', code: 400 });
+    }
+    if (!/^[a-zA-Z0-9._-]{3,64}$/.test(username)) {
+      return res.status(400).json({ error: 'Benutzername muss 3-64 Zeichen lang sein und darf nur Buchstaben, Zahlen, Punkte, Bindestriche und Unterstriche enthalten.', code: 400 });
+    }
+    if (display_name.length > 128) {
+      return res.status(400).json({ error: 'Anzeigename darf maximal 128 Zeichen lang sein.', code: 400 });
+    }
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Passwort muss mindestens 8 Zeichen haben.', code: 400 });
+    }
+
+    const avatarColor = avatarColors[Math.floor(Math.random() * avatarColors.length)];
+    const hash = await bcrypt.hash(password, 12);
+
+    const result = db.get()
+      .prepare('INSERT INTO users (username, display_name, password_hash, avatar_color, role) VALUES (?, ?, ?, ?, ?)')
+      .run(username, display_name, hash, avatarColor, 'admin');
+
+    res.status(201).json({
+      user: { id: result.lastInsertRowid, username, display_name, avatar_color: avatarColor, role: 'admin' },
+    });
+  } catch (err) {
+    if (err.message?.includes('UNIQUE constraint')) {
+      return res.status(409).json({ error: 'Benutzername bereits vergeben.', code: 409 });
+    }
+    log.error('Setup error:', err);
+    res.status(500).json({ error: 'Interner Serverfehler.', code: 500 });
+  }
 });
 
 /**
