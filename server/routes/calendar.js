@@ -125,10 +125,13 @@ router.get('/', (req, res) => {
       SELECT e.*,
              u_assigned.display_name AS assigned_name,
              u_assigned.avatar_color AS assigned_color,
-             u_created.display_name  AS creator_name
+             u_created.display_name  AS creator_name,
+             ec.name  AS cal_name,
+             ec.color AS cal_color
       FROM calendar_events e
       LEFT JOIN users u_assigned ON u_assigned.id = e.assigned_to
       LEFT JOIN users u_created  ON u_created.id  = e.created_by
+      LEFT JOIN external_calendars ec ON ec.id = e.calendar_ref_id
       WHERE (
         (e.recurrence_rule IS NULL AND
           DATE(e.start_datetime) <= ? AND
@@ -182,9 +185,12 @@ router.get('/upcoming', (req, res) => {
     const rawEvents = db.get().prepare(`
       SELECT e.*,
              u_assigned.display_name AS assigned_name,
-             u_assigned.avatar_color AS assigned_color
+             u_assigned.avatar_color AS assigned_color,
+             ec.name  AS cal_name,
+             ec.color AS cal_color
       FROM calendar_events e
       LEFT JOIN users u_assigned ON u_assigned.id = e.assigned_to
+      LEFT JOIN external_calendars ec ON ec.id = e.calendar_ref_id
       WHERE (
         (e.recurrence_rule IS NULL AND DATE(e.start_datetime) BETWEEN ? AND ?)
         OR

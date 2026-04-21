@@ -20,6 +20,18 @@ import * as db from '../db.js';
 
 const GOOGLE_COLOR = '#4285F4';
 
+function upsertExternalCalendar(source, externalId, name, color) {
+  const row = db.get().prepare(`
+    INSERT INTO external_calendars (source, external_id, name, color)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(source, external_id) DO UPDATE SET
+      name  = excluded.name,
+      color = excluded.color
+    RETURNING id
+  `).get(source, externalId, name, color);
+  return row.id;
+}
+
 // --------------------------------------------------------
 // OAuth2-Client (lazy initialisiert)
 // --------------------------------------------------------
@@ -160,6 +172,18 @@ async function sync() {
   const client  = loadAuthorizedClient();
   const calendar = google.calendar({ version: 'v3', auth: client });
 
+  // Kalender-Metadaten holen und in external_calendars upserten
+  let calRefId = null;
+  let calColor = GOOGLE_COLOR;
+  try {
+    const meta = await calendar.calendarList.get({ calendarId: 'primary' });
+    calColor  = meta.data.backgroundColor || GOOGLE_COLOR;
+    const calName = meta.data.summary || 'Google Calendar';
+    calRefId  = upsertExternalCalendar('google', 'primary', calName, calColor);
+  } catch (err) {
+    log.warn('Kalender-Metadaten nicht abrufbar:', err.message);
+  }
+
   // --------------------------------------------------------
   // Inbound: Google → lokal
   // --------------------------------------------------------
@@ -199,7 +223,7 @@ async function sync() {
     }
 
     const items = response.data.items || [];
-    upsertGoogleEvents(items);
+    upsertGoogleEvents(items, calRefId, calColor);
 
     pageToken    = response.data.nextPageToken;
     newSyncToken = response.data.nextSyncToken || newSyncToken;
@@ -238,29 +262,11 @@ async function sync() {
 // Helfer: Google-Event in lokale DB upserten
 // --------------------------------------------------------
 
-function upsertGoogleEvents(items) {
-  const upsert = db.get().prepare(`
-    INSERT INTO calendar_events
-      (title, description, start_datetime, end_datetime, all_day,
-       location, color, external_calendar_id, external_source, recurrence_rule, created_by)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'google', ?, 1)
-    ON CONFLICT(external_calendar_id) DO UPDATE SET
-      title          = excluded.title,
-      description    = excluded.description,
-      start_datetime = excluded.start_datetime,
-      end_datetime   = excluded.end_datetime,
-      all_day        = excluded.all_day,
-      location       = excluded.location,
-      recurrence_rule = excluded.recurrence_rule
-  `);
-
+function upsertGoogleEvents(items, calRefId = null, calColor = GOOGLE_COLOR) {
   const del = db.get().prepare(`
     DELETE FROM calendar_events WHERE external_calendar_id = ? AND external_source = 'google'
   `);
 
-  // Erst external_calendar_id UNIQUE index anlegen falls noch nicht vorhanden
-  // (Migration 2 legt idx_calendar_external_id an, aber kein UNIQUE constraint)
-  // Wir nutzen stattdessen manuelles Upsert mit SELECT + INSERT/UPDATE
   const insertOrUpdate = db.transaction((item) => {
     if (item.status === 'cancelled') {
       del.run(item.id);
@@ -283,16 +289,16 @@ function upsertGoogleEvents(items) {
       db.get().prepare(`
         UPDATE calendar_events
         SET title = ?, description = ?, start_datetime = ?, end_datetime = ?,
-            all_day = ?, location = ?, recurrence_rule = ?
+            all_day = ?, location = ?, recurrence_rule = ?, color = ?, calendar_ref_id = ?
         WHERE id = ?
-      `).run(title, description, startDt, endDt, allDay ? 1 : 0, location, rrule, existing.id);
+      `).run(title, description, startDt, endDt, allDay ? 1 : 0, location, rrule, calColor, calRefId, existing.id);
     } else {
       db.get().prepare(`
         INSERT INTO calendar_events
           (title, description, start_datetime, end_datetime, all_day,
-           location, color, external_calendar_id, external_source, recurrence_rule, created_by)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'google', ?, 1)
-      `).run(title, description, startDt, endDt, allDay ? 1 : 0, location, GOOGLE_COLOR, item.id, rrule);
+           location, color, external_calendar_id, external_source, recurrence_rule, calendar_ref_id, created_by)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'google', ?, ?, 1)
+      `).run(title, description, startDt, endDt, allDay ? 1 : 0, location, calColor, item.id, rrule, calRefId);
     }
   });
 

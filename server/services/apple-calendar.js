@@ -21,6 +21,29 @@ import { unfoldLines, parseICS, formatICSDate, tzLocalToUTC, applyDuration } fro
 const APPLE_COLOR = '#FC3C44';
 
 // --------------------------------------------------------
+// Externe Kalender-Metadaten upserten
+// --------------------------------------------------------
+
+function normalizeCalColor(c) {
+  if (!c) return null;
+  if (/^#[0-9a-fA-F]{8}$/.test(c)) return c.slice(0, 7); // strip alpha
+  if (/^#[0-9a-fA-F]{6}$/.test(c)) return c;
+  return null;
+}
+
+function upsertExternalCalendar(source, externalId, name, color) {
+  const row = db.get().prepare(`
+    INSERT INTO external_calendars (source, external_id, name, color)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(source, external_id) DO UPDATE SET
+      name  = excluded.name,
+      color = excluded.color
+    RETURNING id
+  `).get(source, externalId, name, color);
+  return row.id;
+}
+
+// --------------------------------------------------------
 // sync_config Helfer
 // --------------------------------------------------------
 
@@ -152,6 +175,15 @@ function escapeICS(str) {
   return String(str).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 }
 
+function unescapeICS(str) {
+  if (!str) return str;
+  return str
+    .replace(/\\[Nn]/g, '\n')
+    .replace(/\\,/g,  ',')
+    .replace(/\\;/g,  ';')
+    .replace(/\\\\/g, '\\');
+}
+
 // --------------------------------------------------------
 // Sync
 // --------------------------------------------------------
@@ -207,6 +239,11 @@ async function sync() {
 
     totalObjects += calObjects.length;
 
+    // Kalender-Metadaten in external_calendars upserten
+    const calColor = normalizeCalColor(cal.calendarColor) || APPLE_COLOR;
+    const calName  = cal.displayName || 'Apple Calendar';
+    const calRefId = upsertExternalCalendar('apple', cal.url, calName, calColor);
+
     // --------------------------------------------------------
     // Inbound: iCloud → lokal
     // --------------------------------------------------------
@@ -222,21 +259,21 @@ async function sync() {
             db.get().prepare(`
               UPDATE calendar_events
               SET title = ?, description = ?, start_datetime = ?, end_datetime = ?,
-                  all_day = ?, location = ?, recurrence_rule = ?
+                  all_day = ?, location = ?, recurrence_rule = ?, color = ?, calendar_ref_id = ?
               WHERE id = ?
             `).run(
               ev.summary, ev.description, ev.dtstart, ev.dtend,
-              ev.allDay ? 1 : 0, ev.location, ev.rrule, existing.id
+              ev.allDay ? 1 : 0, ev.location, ev.rrule, calColor, calRefId, existing.id
             );
           } else {
             db.get().prepare(`
               INSERT INTO calendar_events
                 (title, description, start_datetime, end_datetime, all_day,
-                 location, color, external_calendar_id, external_source, recurrence_rule, created_by)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'apple', ?, ?)
+                 location, color, external_calendar_id, external_source, recurrence_rule, calendar_ref_id, created_by)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'apple', ?, ?, ?)
             `).run(
               ev.summary, ev.description, ev.dtstart, ev.dtend,
-              ev.allDay ? 1 : 0, ev.location, APPLE_COLOR, ev.uid, ev.rrule, createdBy
+              ev.allDay ? 1 : 0, ev.location, calColor, ev.uid, ev.rrule, calRefId, createdBy
             );
           }
         } catch (err) {
