@@ -6,7 +6,7 @@
 
 import { api } from '/api.js';
 import { t, formatDate, formatTime, getLocale } from '/i18n.js';
-import { esc } from '/utils/html.js';
+import { esc, fmtLocation } from '/utils/html.js';
 import { openModal, closeModal } from '/components/modal.js';
 
 // Hält den AbortController des aktuellen FAB-Listeners - wird bei jedem render() erneuert.
@@ -236,13 +236,14 @@ function renderUpcomingEvents(events) {
     const timeStr = e.all_day ? t('dashboard.allDay') : `${formatTime(d)}${_suffix ? ' ' + _suffix : ''}`.trim();
     return `
       <div class="event-item" data-route="/calendar" role="button" tabindex="0">
-        <div class="event-item__bar" style="background-color:${esc(e.color) || 'var(--color-accent)'}"></div>
+        <div class="event-item__bar" style="background-color:${esc(e.cal_color || e.color) || 'var(--color-accent)'}"></div>
         <div class="event-item__content">
           <div class="event-item__title">${esc(e.title)}</div>
           <div class="event-item__time">
             <span class="event-time-badge ${isToday ? 'event-time-badge--today' : ''}">${isToday ? t('common.today') : formatDateTime(e.start_datetime).split(',')[0]}</span>
             ${timeStr}
-            ${e.location ? ` · ${esc(e.location)}` : ''}
+            ${e.location ? ` · ${esc(fmtLocation(e.location))}` : ''}
+            ${e.cal_name ? `<span class="event-item__cal">${esc(e.cal_name)}</span>` : ''}
           </div>
         </div>
       </div>
