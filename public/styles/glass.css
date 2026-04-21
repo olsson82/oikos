@@ -345,8 +345,10 @@ textarea.form-input {
  * 17. Bottom-Nav Auto-Hide on Scroll
  * ================================================================ */
 .nav-bottom {
+  margin-bottom: 0;
   transition:
     transform var(--transition-base) var(--ease-out),
+    margin-bottom var(--transition-base) var(--ease-out),
     background-color var(--transition-fast),
     box-shadow var(--transition-fast);
   /* will-change: transform absichtlich weggelassen - auf iOS (WebKit) korrumpiert die
@@ -354,7 +356,8 @@ textarea.form-input {
 }
 
 .nav-bottom--hidden {
-  transform: translateY(calc(100% + var(--safe-area-inset-bottom)));
+  transform: translateY(100%);
+  margin-bottom: calc(-1 * (var(--nav-height-mobile)));
   pointer-events: none;
 }
 
