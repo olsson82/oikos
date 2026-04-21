@@ -747,6 +747,7 @@ if ('serviceWorker' in navigator) {
       // Modul-Cache leeren damit nächste Navigation frische Module lädt
       moduleCache.clear();
       showToast(t('common.updateAvailable'), 'default', 8000);
+      setTimeout(() => location.reload(), 8000);
     }
   });
 }
