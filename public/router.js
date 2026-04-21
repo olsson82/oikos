@@ -858,8 +858,15 @@ if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
 // Initialisierung
 // --------------------------------------------------------
 (async () => {
-  await initI18n();
-  navigate(location.pathname, false);
+  try {
+    await initI18n();
+    navigate(location.pathname, false);
+  } catch (err) {
+    console.error('[Router] Initialisierung fehlgeschlagen:', err);
+    const loading = document.getElementById('app-loading');
+    if (loading) loading.hidden = true;
+    renderError(document.getElementById('app'), err);
+  }
 })();
 
 // Globale Exporte

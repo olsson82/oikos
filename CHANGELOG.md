@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-04-21
+
+### Fixed
+- App no longer gets stuck on the "Oikos" splash screen when opened in a new tab. Two root causes addressed: (1) `sw.js` was not updated in v0.22.0, so the browser kept the old Service Worker and served stale cached files (old `router.js`, `meals.js`) via Stale-While-Revalidate — cache versions are now bumped (shell v35, pages v30) to force reinstallation and fresh file delivery. (2) A fatal error in `initI18n()` (e.g. locale fetch failure offline) left the splash screen visible forever — the router IIFE now catches such errors, hides the splash screen, and renders a recoverable error state.
+- Service Worker now pre-caches `/pages/recipes.js` and `/styles/recipes.css` introduced in v0.22.0, enabling offline access to the Recipes page.
+
 ## [0.22.0] - 2026-04-21
 
 ### Added

@@ -12,8 +12,8 @@
  *   API: Immer Netzwerk (kein Caching von Nutzerdaten)
  */
 
-const SHELL_CACHE   = 'oikos-shell-v34';
-const PAGES_CACHE   = 'oikos-pages-v29';
+const SHELL_CACHE   = 'oikos-shell-v35';
+const PAGES_CACHE   = 'oikos-pages-v30';
 const ASSETS_CACHE  = 'oikos-assets-v27';
 const ALL_CACHES    = [SHELL_CACHE, PAGES_CACHE, ASSETS_CACHE];
 
@@ -50,6 +50,7 @@ const APP_SHELL = [
   '/styles/contacts.css',
   '/styles/budget.css',
   '/styles/settings.css',
+  '/styles/recipes.css',
   '/components/oikos-install-prompt.js',
   '/offline.html',
   '/manifest.json',
@@ -74,6 +75,7 @@ const PAGE_MODULES = [
   '/pages/budget.js',
   '/pages/settings.js',
   '/pages/login.js',
+  '/pages/recipes.js',
 ];
 
 // --------------------------------------------------------
