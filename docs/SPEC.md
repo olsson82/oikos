@@ -90,8 +90,10 @@ Custom, household-wide category list for shopping items. Replaces the old hardco
 | assigned_to | INTEGER | FK → Users |
 | created_by | INTEGER | FK → Users, NOT NULL |
 | external_calendar_id | TEXT | ID from external calendar |
-| external_source | TEXT | local, google, apple |
+| external_source | TEXT | local, google, apple, ics |
 | recurrence_rule | TEXT | iCal RRULE |
+| subscription_id | INTEGER | FK → ICS Subscriptions (CASCADE delete) |
+| user_modified | INTEGER | 0/1 — prevents sync overwrite when 1 |
 
 ### Notes
 | Column | Type | Constraint |
@@ -132,6 +134,21 @@ Stores instances of a recurring entry deleted by the user so they are not re-gen
 | parent_id | INTEGER | FK → Budget Entries, NOT NULL |
 | month | TEXT | YYYY-MM, NOT NULL |
 | PRIMARY KEY | | (parent_id, month) |
+
+### ICS Subscriptions
+External calendar feeds subscribed by users (read-only, auto-synced).
+
+| Column | Type | Constraint |
+|--------|------|-----------|
+| name | TEXT | NOT NULL |
+| url | TEXT | NOT NULL (https:// or webcal://) |
+| color | TEXT | HEX, default #6366f1 |
+| shared | INTEGER | 0/1 — visible to all family members when 1 |
+| created_by | INTEGER | FK → Users (SET NULL on delete) |
+| etag | TEXT | HTTP ETag for conditional fetch |
+| last_modified | TEXT | HTTP Last-Modified for conditional fetch |
+| last_sync | TEXT | ISO timestamp of last successful sync |
+| created_at | TEXT | ISO timestamp |
 
 ### Sync Config
 Key-value table for OAuth tokens and CalDAV credentials.
@@ -206,6 +223,7 @@ Weekly view (Mon–Sun), slots: breakfast / lunch / dinner / snack.
 - Recurring via iCal RRULE
 - **Google Calendar:** OAuth 2.0, Calendar API v3, two-way sync
 - **Apple Calendar:** CalDAV (tsdav), two-way sync
+- **ICS Subscriptions:** Subscribe to any public ICS/webcal URL (e.g. public holidays, sports schedules). Per-subscription color, private/shared visibility, manual "Sync now" and automatic sync on the shared interval. RRULE events expanded into a rolling ±6/+12 month window. SSRF-protected (DNS pre-resolution), ETag/Last-Modified conditional fetch, 10 MB limit, 15 s timeout. User-edited events are protected from being overwritten (`user_modified`); a "Reset to original" link restores them.
 - Configurable sync interval (default 15 min)
 - External events visually distinguishable
 - Conflicts: external event wins, local additions are preserved
@@ -244,7 +262,7 @@ User management and app configuration. Logged-in users only.
 
 - **Profile:** change display name, avatar color, password
 - **User management (admin):** create new users, edit/delete existing users, assign roles (admin/member)
-- **Calendar integration:** connect/disconnect Google Calendar OAuth, store Apple Calendar (CalDAV) credentials, configure sync interval
+- **Calendar integration:** connect/disconnect Google Calendar OAuth, store Apple Calendar (CalDAV) credentials, configure sync interval; manage ICS URL subscriptions (add, delete, sync now, set color and visibility)
 - **Weather:** configure OpenWeatherMap location
 - **Language:** System (follows `navigator.language`), German, English, Spanish, French, Italian, Swedish, Greek, Russian, Turkish, Chinese - via `oikos-locale-picker` web component; switch without page reload
 - **Tab navigation:** Settings is organized in six tabs (General, Meals, Budget, Shopping, Calendar, Account). Sticky tab bar, active tab persists in sessionStorage, Calendar tab auto-activates after OAuth callbacks.

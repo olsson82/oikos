@@ -49,7 +49,7 @@
 
 **Meal Planning:** Weekly drag-and-drop planner with ingredient lists and shopping export
 
-**Calendar Sync:** Two-way sync with Google Calendar (OAuth) and Apple iCloud (CalDAV)
+**Calendar Sync:** Two-way sync with Google Calendar (OAuth) and Apple iCloud (CalDAV); subscribe to any public ICS/webcal URL with per-subscription color, private/shared visibility, and automatic sync
 
 **Budget Tracking:** Income and expenses, recurring entries, configurable currency (15 currencies), monthly trends, CSV export
 

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.39] - 2026-04-21
+
+### Changed
+- `docs/SPEC.md`: document `ics` as a valid `external_source` value, add `subscription_id` and `user_modified` columns to Calendar Events data model, add ICS Subscriptions table definition, expand Calendar module section with ICS subscription feature details, update Settings section
+- `README.md`: update Calendar Sync highlight to mention ICS/webcal URL subscriptions
+
 ## [0.20.38] - 2026-04-21
 
 ### Added
