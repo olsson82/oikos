@@ -1430,6 +1430,10 @@ export async function render(container, { user }) {
       <div class="tasks-toolbar">
         <h1 class="tasks-toolbar__title">${t('tasks.title')}</h1>
         <div class="tasks-toolbar__actions">
+          <div class="group-toggle" id="group-mode-toggle" ${isKanban ? 'style="display:none"' : ''}>
+            <button class="group-toggle__btn group-toggle__btn--active" data-mode="category">${t('tasks.categoryLabel')}</button>
+            <button class="group-toggle__btn" data-mode="due">${t('tasks.dueDateLabel')}</button>
+          </div>
           <div class="group-toggle" id="view-toggle">
             <button class="group-toggle__btn ${isKanban ? '' : 'group-toggle__btn--active'}" data-view="list"
                     title="${t('tasks.listView')}" aria-label="${t('tasks.listView')}">
@@ -1440,30 +1444,28 @@ export async function render(container, { user }) {
               <i data-lucide="columns" class="icon-md" aria-hidden="true"></i>
             </button>
           </div>
-          <div class="group-toggle" id="group-mode-toggle" ${isKanban ? 'style="display:none"' : ''}>
-            <button class="group-toggle__btn group-toggle__btn--active" data-mode="category">${t('tasks.categoryLabel')}</button>
-            <button class="group-toggle__btn" data-mode="due">${t('tasks.dueDateLabel')}</button>
-          </div>
           <button class="btn btn--primary" id="btn-new-task" style="gap:var(--space-1)">
             <i data-lucide="plus" class="icon-lg" aria-hidden="true"></i> ${t('tasks.newTask')}
           </button>
         </div>
       </div>
 
-      <div class="tasks-filters" id="filter-bar"></div>
-      <div class="filter-panel" id="filter-panel" hidden></div>
+      <div class="tasks-body">
+        <div class="tasks-filters" id="filter-bar"></div>
+        <div class="filter-panel" id="filter-panel" hidden></div>
 
-      <div id="task-list">
-        ${[1,2,3].map(() => `
-          <div class="widget-skeleton" style="margin-bottom:var(--space-2)">
-            <div class="skeleton skeleton-line skeleton-line--medium" style="height:18px;margin-bottom:var(--space-3)"></div>
-            <div class="skeleton skeleton-line skeleton-line--full" style="height:14px;margin-bottom:var(--space-2)"></div>
-            <div class="skeleton skeleton-line skeleton-line--short" style="height:12px"></div>
-          </div>`).join('')}
+        <div id="task-list">
+          ${[1,2,3].map(() => `
+            <div class="widget-skeleton" style="margin-bottom:var(--space-2)">
+              <div class="skeleton skeleton-line skeleton-line--medium" style="height:18px;margin-bottom:var(--space-3)"></div>
+              <div class="skeleton skeleton-line skeleton-line--full" style="height:14px;margin-bottom:var(--space-2)"></div>
+              <div class="skeleton skeleton-line skeleton-line--short" style="height:12px"></div>
+            </div>`).join('')}
+        </div>
+        <button class="page-fab" id="fab-new-task" aria-label="${t('tasks.newTask')}">
+          <i data-lucide="plus" class="icon-2xl" aria-hidden="true"></i>
+        </button>
       </div>
-      <button class="page-fab" id="fab-new-task" aria-label="${t('tasks.newTask')}">
-        <i data-lucide="plus" class="icon-2xl" aria-hidden="true"></i>
-      </button>
     </div>
   `;
 
