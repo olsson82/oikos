@@ -96,7 +96,7 @@ function formatDueDate(dateStr, timeStr) {
   }
 
   if (calDayDiff === 0) {
-    return { text: `${t('dashboard.dueToday')} – ${formatTime(dueDate)}`, overdue: false, soon: true };
+    return { text: timeStr ? `${t('dashboard.dueToday')} – ${formatTime(dueDate)}` : t('dashboard.dueToday'), overdue: false, soon: true };
   }
 
   if (calDayDiff === 1) {
@@ -195,7 +195,7 @@ function renderGreeting(user, stats = {}) {
       ${t('dashboard.todayMealChip', { title: esc(todayMealTitle) })}
     </span>`);
 
-  let time = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const time = formatTime(new Date());
 
   return `
     <div class="widget-greeting">

@@ -118,7 +118,7 @@
 
 @media (min-width: 1024px) {
   .widget-greeting__title {
-    font-size: 1.4rem;
+    font-size: var(--text-xl);
     opacity: 0.85;
     white-space: nowrap;
     padding-top: 4px;
@@ -155,7 +155,7 @@
 }
 
 .greeting-chip--due {
-  background: rgba(245, 158, 11, 0.28);
+  background: var(--color-warning-translucent);
 }
 
 /* --------------------------------------------------------
@@ -338,11 +338,6 @@
 
 .task-item__meta--soon {
   color: var(--color-soon);
-  font-weight: var(--font-weight-medium);
-}
-
-.task-item__meta--overdue {
-  color: var(--color-danger);
   font-weight: var(--font-weight-medium);
 }
 

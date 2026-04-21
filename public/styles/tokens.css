@@ -220,7 +220,9 @@
   --color-glass:       rgba(255, 255, 255, 0.18);
   --color-glass-hover: rgba(255, 255, 255, 0.3);
   --color-glass-border: rgba(255, 255, 255, 0.15);
-  --color-danger-translucent: rgba(255, 59, 48, 0.35);
+  --color-danger-translucent:  rgba(255, 59, 48, 0.35);
+  --color-warning-translucent: rgba(245, 158, 11, 0.28);
+  --color-soon: var(--color-warning);
 
   /* --------------------------------------------------------
    * 8. Schatten
