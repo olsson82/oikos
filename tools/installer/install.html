@@ -610,7 +610,10 @@ async function createAdmin() {
     });
     const d = await r.json();
     if (r.status === 201 || r.status === 403) {
-      $('done-link').href = `http://${S.host}:${S.port}`;
+      const appUrl = new URL('http://placeholder');
+      appUrl.hostname = S.host;
+      appUrl.port = S.port;
+      $('done-link').href = appUrl.href;
       showStep(7);
     } else {
       btn.disabled = false; btn.textContent = 'Create Account';

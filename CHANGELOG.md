@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.13] - 2026-04-22
+
+### Security
+- Installer: replaced template-literal URL construction with the `URL` constructor when setting the final "Open Oikos" link, eliminating a potential DOM-based XSS vector (CodeQL js/xss-through-dom, GitHub Advisory #7)
+
 ## [0.23.12] - 2026-04-22
 
 ### Fixed
