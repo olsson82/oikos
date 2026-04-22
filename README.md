@@ -2,7 +2,7 @@
   <img src="docs/logo.svg" alt="Oikos" width="120" />
   <h1>Oikos</h1>
   <p><strong>Self-hosted family planner for small households</strong></p>
-  <p>Tasks · Shopping Lists · Meal Planning · Calendar Sync · Budget · Notes · Contacts</p>
+  <p>Tasks · Shopping Lists · Meal Planning · Recipes · Calendar Sync · Budget · Notes · Contacts</p>
 
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="MIT License"></a>
   <a href="https://github.com/ulsklyc/oikos/releases"><img src="https://img.shields.io/github/v/release/ulsklyc/oikos?style=flat-square&color=007AFF&label=release" alt="Latest Release"></a>
@@ -48,6 +48,8 @@
 **Shopping Lists:** Collaborative lists with aisle categories and one-click import from meal plans
 
 **Meal Planning:** Weekly drag-and-drop planner with ingredient lists and shopping export
+
+**Recipes:** Create, edit, duplicate, and delete reusable recipes with notes, a recipe link, and per-ingredient categories. Pre-fill meal slots from a recipe and scale ingredient quantities; save any meal as a recipe with one click.
 
 **Calendar Sync:** Two-way sync with Google Calendar (OAuth) and Apple iCloud (CalDAV); subscribe to any public ICS/webcal URL with per-subscription color, private/shared visibility, and automatic sync
 

@@ -53,3 +53,13 @@ New suggestion? → [Open an issue](https://github.com/ulsklyc/oikos/issues/new?
 | - | Budget: TRY (Turkish Lira) and RUB (Russian Ruble) added to currency list | v0.16.3 |
 | - | i18n: Japanese (ja), Arabic (ar), Hindi (hi), Portuguese (pt) locales (567 keys each) | v0.19.0 |
 | - | Budget: AED (UAE Dirham), BRL (Brazilian Real), INR (Indian Rupee), SAR (Saudi Riyal) added to currency list | v0.19.0 |
+| - | ICS/webcal URL subscriptions: per-subscription color, shared/private visibility, auto-sync, SSRF protection, ETag conditional fetch, RRULE expansion, `user_modified` guard, "Reset to original" link | v0.20.38 |
+| - | Web installer (`tools/installer/`): browser-based wizard, auto-configures `.env`, starts Docker, creates admin account | v0.21.0 |
+| - | CLI installer (`install.sh`): 7-step interactive wizard, prerequisite check, secret generation, optional integrations, Docker startup, `--env-file` non-interactive mode | v0.21.0 |
+| - | Bootstrap endpoint `POST /api/v1/auth/setup`: first-run admin creation via HTTP without shell access | v0.21.0 |
+| - | Recipes module: CRUD with notes, recipe link, per-ingredient categories; duplicate; "Add to meal plan"; save meal as recipe | v0.22.0 |
+| - | Meals: select recipe to auto-fill modal, scale ingredient quantities | v0.22.0 |
+| - | External calendar display names & colors: `external_calendars` table (migration v14), colored `event-cal-label` badge in all calendar views | v0.23.0 |
+| - | Calendar event location display with RFC 5545 backslash-escape normalization (`fmtLocation()`) | v0.23.0 |
+| - | Tasks: filter defaults to `status: open`; effective due date sort; due chip shows time component | v0.23.0 |
+| - | Dashboard: FAB shortcuts open new-item modal directly after navigation | v0.23.0 |

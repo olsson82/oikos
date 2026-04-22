@@ -67,7 +67,26 @@ Custom, household-wide category list for shopping items. Replaces the old hardco
 | title | TEXT | NOT NULL |
 | notes | TEXT | |
 | recipe_url | TEXT | nullable, URL to recipe |
+| recipe_id | INTEGER | FK → Recipes (ON DELETE SET NULL), nullable |
 | created_by | INTEGER | FK → Users, NOT NULL |
+
+### Recipes
+Reusable recipe cards that can be pre-filled into meal slots.
+
+| Column | Type | Constraint |
+|--------|------|-----------|
+| title | TEXT | NOT NULL |
+| notes | TEXT | |
+| recipe_url | TEXT | nullable |
+| created_by | INTEGER | FK → Users (CASCADE delete) |
+
+### Recipe Ingredients
+| Column | Type | Constraint |
+|--------|------|-----------|
+| recipe_id | INTEGER | FK → Recipes (CASCADE delete), NOT NULL |
+| name | TEXT | NOT NULL |
+| quantity | TEXT | |
+| category | TEXT | NOT NULL (default 'Sonstiges') |
 
 ### Meal Ingredients
 | Column | Type | Constraint |
@@ -94,6 +113,18 @@ Custom, household-wide category list for shopping items. Replaces the old hardco
 | recurrence_rule | TEXT | iCal RRULE |
 | subscription_id | INTEGER | FK → ICS Subscriptions (CASCADE delete) |
 | user_modified | INTEGER | 0/1 — prevents sync overwrite when 1 |
+| calendar_ref_id | INTEGER | FK → External Calendars (ON DELETE SET NULL) |
+
+### External Calendars
+Display metadata (name, color) for synced Google/Apple calendars. Populated automatically during sync.
+
+| Column | Type | Constraint |
+|--------|------|-----------|
+| source | TEXT | 'google' or 'apple', NOT NULL |
+| external_id | TEXT | Calendar ID from the provider, NOT NULL |
+| name | TEXT | Display name from the provider, NOT NULL |
+| color | TEXT | Background color from the provider (HEX) |
+| UNIQUE | | (source, external_id) |
 
 ### Notes
 | Column | Type | Constraint |
@@ -212,7 +243,17 @@ Weekly view (Mon–Sun), slots: breakfast / lunch / dinner / snack.
 - Week navigation forward/back
 - Drag & drop between days/slots
 - Autocomplete from meal history
+- **Recipe integration:** Select a saved recipe from the meal modal to auto-fill title, notes, URL, and ingredients. Scale ingredient quantities by a numeric factor. Save the current meal as a new recipe with one click.
 - **Customizable meal visibility:** In Settings, users can toggle which meal types (breakfast, lunch, dinner, snack) are shown in the planner. Stored as household-wide preference in `sync_config` (key: `visible_meal_types`). At least one type must remain active.
+
+### Recipes (`/recipes`)
+
+Reusable recipe cards linked to meal slots.
+
+- CRUD: title, notes, recipe link, per-ingredient category
+- Duplicate existing recipes
+- "Add to meal plan" navigates to `/meals` with the selected recipe pre-filled in the modal
+- REST API: `GET/POST /api/v1/recipes`, `PUT/DELETE /api/v1/recipes/:id` with ingredient sync
 
 ### Calendar (`/calendar`)
 
@@ -224,6 +265,8 @@ Weekly view (Mon–Sun), slots: breakfast / lunch / dinner / snack.
 - **Google Calendar:** OAuth 2.0, Calendar API v3, two-way sync
 - **Apple Calendar:** CalDAV (tsdav), two-way sync
 - **ICS Subscriptions:** Subscribe to any public ICS/webcal URL (e.g. public holidays, sports schedules). Per-subscription color, private/shared visibility, manual "Sync now" and automatic sync on the shared interval. RRULE events expanded into a rolling ±6/+12 month window. SSRF-protected (DNS pre-resolution), ETag/Last-Modified conditional fetch, 10 MB limit, 15 s timeout. User-edited events are protected from being overwritten (`user_modified`); a "Reset to original" link restores them.
+- **External calendar names & colors:** Google and Apple sync stores each calendar's display name and background color in the `external_calendars` table (migration v14). A colored `event-cal-label` badge appears in event popups, agenda, month, week, and day views when `cal_name` is present.
+- **Event location:** Event popup and dashboard display the location field with RFC 5545 backslash-escape normalization (`\n`, `\,`, `\;`, `\\`) via `fmtLocation()` in `public/utils/html.js`.
 - Configurable sync interval (default 15 min)
 - External events visually distinguishable
 - Conflicts: external event wins, local additions are preserved
