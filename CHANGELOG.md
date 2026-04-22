@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.2] - 2026-04-22
+
+### Fixed
+- Calendar: ICS-synced events now render at the correct local hour and day in week/day/month/agenda views; day-matching and hour-positioning previously used raw string slices which returned UTC values instead of browser-local time for events stored with a `Z` suffix
+
 ## [0.23.1] - 2026-04-22
 
 ### Security

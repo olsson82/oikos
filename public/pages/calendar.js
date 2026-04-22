@@ -86,6 +86,22 @@ let _container = null;
 function pad(n) { return String(n).padStart(2, '0'); }
 function isoDate(d) { return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
 
+// Extract YYYY-MM-DD in the browser's local timezone from any datetime string.
+// For date-only strings (≤10 chars) slicing is safe; for datetime strings with an
+// explicit UTC offset or 'Z' suffix, new Date() converts to local before extraction.
+function localDate(str) {
+  if (!str || str.length <= 10) return (str || '').slice(0, 10);
+  const d = new Date(str);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+// Extract HH:MM in the browser's local timezone from a datetime string.
+function localTime(str) {
+  if (!str || str.length <= 10) return '00:00';
+  const d = new Date(str);
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function addMonths(dateStr, n) {
   const d = new Date(dateStr + 'T00:00:00');
   d.setMonth(d.getMonth() + n);
@@ -119,9 +135,9 @@ function formatDate(dateStr, { long = false, weekday = false } = {}) {
 
 function formatDateTime(datetimeStr) {
   if (!datetimeStr) return '';
-  const date = datetimeStr.slice(0, 10);
-  const hasTime = datetimeStr.length > 10 && datetimeStr.slice(11, 16).trim() !== '';
-  const time = hasTime ? formatTime(datetimeStr) : '';
+  const date    = localDate(datetimeStr);
+  const hasTime = datetimeStr.length > 10;
+  const time    = hasTime ? formatTime(datetimeStr) : '';
   return time ? `${formatDate(date)} ${time} ${t('calendar.timeSuffix')}`.trimEnd() : formatDate(date);
 }
 
@@ -146,8 +162,8 @@ function getAgendaRange(dateStr) {
 
 function eventsOnDay(dateStr) {
   return state.events.filter((e) => {
-    const start = e.start_datetime.slice(0, 10);
-    const end   = e.end_datetime ? e.end_datetime.slice(0, 10) : start;
+    const start = localDate(e.start_datetime);
+    const end   = e.end_datetime ? localDate(e.end_datetime) : start;
     return start <= dateStr && end >= dateStr;
   });
 }
@@ -512,9 +528,9 @@ function renderWeekView(container) {
 }
 
 function renderWeekEvent(ev) {
-  const start = timeToMinutes(ev.start_datetime.slice(11, 16));
+  const start = timeToMinutes(localTime(ev.start_datetime));
   const end   = ev.end_datetime
-    ? timeToMinutes(ev.end_datetime.slice(11, 16))
+    ? timeToMinutes(localTime(ev.end_datetime))
     : start + 60;
   const duration = Math.max(end - start, 30);
 
@@ -866,12 +882,12 @@ function buildEventModalContent({ mode, event, date, reminder = null }) {
   const isEdit = mode === 'edit';
   const today  = date || state.today;
 
-  const startDate = isEdit ? event.start_datetime.slice(0, 10) : today;
+  const startDate = isEdit ? localDate(event.start_datetime) : today;
   const startTime = isEdit && event.start_datetime.length > 10
-    ? event.start_datetime.slice(11, 16) : '09:00';
-  const endDate   = isEdit && event.end_datetime ? event.end_datetime.slice(0, 10) : startDate;
+    ? localTime(event.start_datetime) : '09:00';
+  const endDate   = isEdit && event.end_datetime ? localDate(event.end_datetime) : startDate;
   const endTime   = isEdit && event.end_datetime && event.end_datetime.length > 10
-    ? event.end_datetime.slice(11, 16) : '10:00';
+    ? localTime(event.end_datetime) : '10:00';
 
   const userOpts = [
     `<option value="">${t('calendar.assignedNobody')}</option>`,
