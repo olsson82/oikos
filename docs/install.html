@@ -572,19 +572,80 @@
       <h2 class="section-title reveal" data-i18n="steps_title">Installation</h2>
 
       <div class="tab-bar reveal" role="tablist" aria-label="Installation options">
-        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-a" id="tab-a" data-i18n="tab_a">
-          Option A — Pre-built Image
+        <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-installer" id="tab-installer" data-i18n="tab_installer">
+          Option A — Web Installer
+        </button>
+        <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-a" id="tab-a" data-i18n="tab_a">
+          Option B — Pre-built Image
         </button>
         <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-b" id="tab-b" data-i18n="tab_b">
-          Option B — Build from Source
+          Option C — Build from Source
         </button>
       </div>
 
-      <!-- Option A -->
-      <div class="tab-panel active" id="panel-a" role="tabpanel" aria-labelledby="tab-a">
+      <!-- Option A — Web Installer -->
+      <div class="tab-panel active" id="panel-installer" role="tabpanel" aria-labelledby="tab-installer">
+        <div class="callout callout-success reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          <span data-i18n="option_installer_info">Recommended for most users. A browser-based wizard configures your .env, starts Docker, and creates your admin account — no manual steps. Requires Node.js 18+ on the host.</span>
+        </div>
+
+        <div class="step reveal">
+          <div class="step-num" aria-hidden="true">1</div>
+          <div class="step-content">
+            <h3 class="step-title" data-i18n="step_inst1_title">Clone the repository</h3>
+            <p class="step-desc" data-i18n="step_inst1_desc">Open your terminal and clone Oikos to a folder of your choice.</p>
+            <div class="code-wrap">
+              <div class="code-block" role="region" aria-label="Clone repo">git clone https://github.com/ulsklyc/oikos.git
+cd oikos</div>
+              <button class="copy-btn" data-copy="git clone https://github.com/ulsklyc/oikos.git&#10;cd oikos" aria-label="Copy commands">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span data-i18n="copy">Copy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <div class="step-num" aria-hidden="true">2</div>
+          <div class="step-content">
+            <h3 class="step-title" data-i18n="step_inst2_title">Start the installer</h3>
+            <p class="step-desc" data-i18n="step_inst2_desc">Run this command from the repository root. The installer server starts on port 8090.</p>
+            <div class="code-wrap">
+              <div class="code-block" role="region" aria-label="Start installer"><span class="cmd">node tools/installer/install-server.js</span></div>
+              <button class="copy-btn" data-copy="node tools/installer/install-server.js" aria-label="Copy command">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span data-i18n="copy">Copy</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <div class="step-num" aria-hidden="true">3</div>
+          <div class="step-content">
+            <h3 class="step-title" data-i18n="step_inst3_title">Open the wizard in your browser</h3>
+            <p class="step-desc" data-i18n="step_inst3_desc">Navigate to the following address. The wizard will guide you through configuration, Docker startup, and admin account creation.</p>
+            <div class="code-wrap">
+              <div class="code-block" role="region" aria-label="Installer URL"><span class="val">http://localhost:8090</span></div>
+              <button class="copy-btn" data-copy="http://localhost:8090" aria-label="Copy URL">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span data-i18n="copy">Copy</span>
+              </button>
+            </div>
+            <div class="callout callout-info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span data-i18n="step_inst3_info">The installer shuts down automatically after setup completes. Your Oikos instance keeps running via Docker.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option B — Pre-built Image -->
+      <div class="tab-panel" id="panel-a" role="tabpanel" aria-labelledby="tab-a">
         <div class="callout callout-info reveal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span data-i18n="option_a_info">Recommended for most users. No Git, no build step — just two files and a single command.</span>
+          <span data-i18n="option_a_info">No Git, no build step — just two files and a single command. Requires only Docker.</span>
         </div>
 
         <div class="step reveal">
@@ -673,7 +734,7 @@ curl -O https://raw.githubusercontent.com/ulsklyc/oikos/main/.env.example</div>
         </div>
       </div>
 
-      <!-- Option B -->
+      <!-- Option C — Build from Source -->
       <div class="tab-panel" id="panel-b" role="tabpanel" aria-labelledby="tab-b">
         <div class="callout callout-info reveal">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -924,10 +985,19 @@ docker compose logs | grep "Server läuft"</div>
           prereq_sys_hint: '~500 MB disk for Docker image',
           steps_label: 'Step by step',
           steps_title: 'Installation',
-          tab_a: 'Option A \u2014 Pre-built Image',
-          tab_b: 'Option B \u2014 Build from Source',
-          option_a_info: 'Recommended for most users. No Git, no build step \u2014 just two files and a single command.',
+          tab_installer: 'Option A \u2014 Web Installer',
+          tab_a: 'Option B \u2014 Pre-built Image',
+          tab_b: 'Option C \u2014 Build from Source',
+          option_installer_info: 'Recommended for most users. A browser-based wizard configures your .env, starts Docker, and creates your admin account \u2014 no manual steps. Requires Node.js 18+ on the host.',
+          option_a_info: 'No Git, no build step \u2014 just two files and a single command. Requires only Docker.',
           option_b_info: 'For contributors or those who want to run a custom version. Requires Git. The first build takes a few minutes.',
+          step_inst1_title: 'Clone the repository',
+          step_inst1_desc: 'Open your terminal and clone Oikos to a folder of your choice.',
+          step_inst2_title: 'Start the installer',
+          step_inst2_desc: 'Run this command from the repository root. The installer server starts on port 8090.',
+          step_inst3_title: 'Open the wizard in your browser',
+          step_inst3_desc: 'Navigate to the following address. The wizard will guide you through configuration, Docker startup, and admin account creation.',
+          step_inst3_info: 'The installer shuts down automatically after setup completes. Your Oikos instance keeps running via Docker.',
           step_a1_title: 'Download the configuration files',
           step_a1_desc: 'Open your terminal and run these two commands. They download the Docker configuration and the template for your settings.',
           step_a2_title: 'Create your configuration',
@@ -1009,10 +1079,19 @@ docker compose logs | grep "Server läuft"</div>
           prereq_sys_hint: '~500 MB Speicher f\u00fcr das Docker-Image',
           steps_label: 'Schritt f\u00fcr Schritt',
           steps_title: 'Installation',
-          tab_a: 'Option A \u2014 Fertiges Image',
-          tab_b: 'Option B \u2014 Aus Quellcode bauen',
-          option_a_info: 'Empfohlen f\u00fcr die meisten Nutzer. Kein Git, kein Build-Schritt \u2014 nur zwei Dateien und ein einziger Befehl.',
+          tab_installer: 'Option A \u2014 Web-Installer',
+          tab_a: 'Option B \u2014 Fertiges Image',
+          tab_b: 'Option C \u2014 Aus Quellcode bauen',
+          option_installer_info: 'Empfohlen f\u00fcr die meisten Nutzer. Ein browserbasierter Assistent konfiguriert eure .env, startet Docker und erstellt euer Admin-Konto \u2014 ganz ohne manuelle Schritte. Erfordert Node.js 18+ auf dem Host.',
+          option_a_info: 'Kein Git, kein Build-Schritt \u2014 nur zwei Dateien und ein einziger Befehl. Nur Docker erforderlich.',
           option_b_info: 'F\u00fcr Mitwirkende oder wer eine eigene Version ausf\u00fchren m\u00f6chte. Erfordert Git. Der erste Build dauert einige Minuten.',
+          step_inst1_title: 'Repository klonen',
+          step_inst1_desc: '\u00d6ffnet euer Terminal und klont Oikos in einen Ordner eurer Wahl.',
+          step_inst2_title: 'Installer starten',
+          step_inst2_desc: 'F\u00fchrt diesen Befehl vom Projektordner aus. Der Installer-Server startet auf Port 8090.',
+          step_inst3_title: 'Assistenten im Browser \u00f6ffnen',
+          step_inst3_desc: 'Navigiert zur folgenden Adresse. Der Assistent f\u00fchrt euch durch Konfiguration, Docker-Start und Admin-Konto-Erstellung.',
+          step_inst3_info: 'Der Installer beendet sich automatisch nach Abschluss der Einrichtung. Eure Oikos-Instanz l\u00e4uft weiter \u00fcber Docker.',
           step_a1_title: 'Konfigurationsdateien herunterladen',
           step_a1_desc: '\u00d6ffnet euer Terminal und f\u00fchrt diese zwei Befehle aus. Sie laden die Docker-Konfiguration und die Vorlage f\u00fcr eure Einstellungen herunter.',
           step_a2_title: 'Konfiguration erstellen',

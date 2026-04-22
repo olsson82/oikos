@@ -67,7 +67,16 @@
 
 ## Quick Start
 
-**Option A — pre-built image (fastest, no clone required):**
+**Option A — Web Installer (recommended):**
+
+```bash
+git clone https://github.com/ulsklyc/oikos.git && cd oikos
+node tools/installer/install-server.js
+```
+
+Then open **http://localhost:8090** in your browser. The wizard configures your `.env`, starts Docker, and creates your admin account — no manual steps needed. Requires Node.js 18+ on the host.
+
+**Option B — pre-built image (no clone required):**
 
 ```bash
 curl -O https://raw.githubusercontent.com/ulsklyc/oikos/main/docker-compose.yml
@@ -77,7 +86,7 @@ docker compose up -d
 docker compose exec oikos node setup.js
 ```
 
-**Option B — build from source:**
+**Option C — build from source:**
 
 ```bash
 git clone https://github.com/ulsklyc/oikos.git && cd oikos

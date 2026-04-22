@@ -1,8 +1,18 @@
 ## Quick Install
 
-Two ways to get Oikos running from scratch:
+Three ways to get Oikos running from scratch:
 
-### Option A — CLI Installer (Linux / macOS)
+### Option A — Web Installer (recommended, all platforms)
+
+```bash
+git clone https://github.com/ulsklyc/oikos.git && cd oikos
+node tools/installer/install-server.js
+# Open http://localhost:8090
+```
+
+Requires Node.js 18+ on the host. The browser-based wizard configures your `.env`, starts Docker, and creates your admin account. Docker still runs the app itself.
+
+### Option B — CLI Installer (Linux / macOS)
 
 ```bash
 git clone https://github.com/ulsklyc/oikos.git && cd oikos
@@ -17,15 +27,15 @@ Non-interactive mode (CI/provisioning — provide your own `.env`):
 bash install.sh --env-file /path/to/.env
 ```
 
-### Option B — Web Installer (all platforms with Node.js)
+### Option C — Manual (Docker only, no clone required)
 
 ```bash
-git clone https://github.com/ulsklyc/oikos.git && cd oikos
-node tools/installer/install-server.js
-# Open http://localhost:8090
+curl -O https://raw.githubusercontent.com/ulsklyc/oikos/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/ulsklyc/oikos/main/.env.example
+cp .env.example .env  # set SESSION_SECRET and DB_ENCRYPTION_KEY
+docker compose up -d
+docker compose exec oikos node setup.js
 ```
-
-Requires Node.js 18+ on the host. Docker still runs the app itself.
 
 ---
 
@@ -100,11 +110,43 @@ git --version              # git version 2.x.x
 
 ## Step-by-Step Installation
 
-There are two ways to get Oikos running. **Option A** (pre-built image) is recommended for most users — no clone required. **Option B** (build from source) is for contributors or if you want to run a custom version.
+There are three ways to get Oikos running. **Option A** (web installer) is recommended for most users — it walks you through every step in your browser. **Option B** (pre-built image) is a quick manual alternative. **Option C** (build from source) is for contributors or custom builds.
 
 ---
 
-### Option A — Pre-built Image (Recommended)
+### Option A — Web Installer (Recommended)
+
+Requires Node.js 18+ and Docker on the host.
+
+#### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ulsklyc/oikos.git
+cd oikos
+```
+
+#### 2. Start the Installer
+
+```bash
+node tools/installer/install-server.js
+```
+
+#### 3. Open the Wizard
+
+Open your browser and navigate to **http://localhost:8090**. The wizard guides you through:
+
+- Basic configuration (host, port, timezone)
+- Security key generation
+- Optional integrations (weather, Google Calendar, Apple CalDAV)
+- Writing your `.env` file
+- Starting the Docker container
+- Creating your admin account
+
+The installer server shuts down automatically after setup completes (or after 30 minutes of inactivity).
+
+---
+
+### Option B — Pre-built Image
 
 A ready-to-use Docker image is published to the GitHub Container Registry on every release. You only need two files.
 
@@ -148,7 +190,7 @@ Continue with [Step 4 — Verify](#4-verify-the-container-is-running).
 
 ---
 
-### Option B — Build from Source
+### Option C — Build from Source
 
 #### 1. Clone the Repository
 
@@ -368,7 +410,7 @@ docker compose up -d
 
 ## Updates
 
-### Option A — Pre-built Image
+### Option B — Pre-built Image
 
 Pull the latest published image and restart:
 
@@ -379,7 +421,7 @@ docker compose up -d
 
 No rebuild needed. The database volume persists across updates.
 
-### Option B — Build from Source
+### Option C — Build from Source
 
 ```bash
 cd oikos
@@ -392,12 +434,12 @@ docker compose up -d --build
 If the [CHANGELOG](../CHANGELOG.md) mentions database migrations or breaking changes, stop the container before updating:
 
 ```bash
-# Option A (pre-built)
+# Option B (pre-built)
 docker compose pull
 docker compose down
 docker compose up -d
 
-# Option B (build from source)
+# Option C (build from source)
 docker compose down
 git pull
 docker compose up -d --build
@@ -525,7 +567,7 @@ If you have existing data, you need the original encryption key. There is no way
 <details>
 <summary>SQLCipher build fails during Docker build</summary>
 
-> **Tip**: If you hit build issues, switch to the pre-built image (Option A above) — it ships with SQLCipher already compiled and requires no local build step.
+> **Tip**: If you hit build issues, switch to the pre-built image (Option B above) — it ships with SQLCipher already compiled and requires no local build step.
 
 The Dockerfile installs these build dependencies: `python3`, `make`, `g++`, `libsqlcipher-dev`. If the build fails, ensure your Docker installation is up to date and has internet access to pull packages.
 

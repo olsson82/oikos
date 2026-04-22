@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.4] - 2026-04-22
+
+### Changed
+- Docs: web installer (`node tools/installer/install-server.js`) is now Option A in all installation guides (`README.md`, `docs/installation.md`, GitHub Pages `docs/install.html`); the pre-built Docker image method is relabelled Option B and the build-from-source method Option C
+
 ## [0.23.3] - 2026-04-22
 
 ### Fixed
