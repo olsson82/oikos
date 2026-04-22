@@ -303,23 +303,42 @@ function renderAppShell(container) {
   const sidebarLogo = document.createElement('div');
   sidebarLogo.className = 'nav-sidebar__logo';
 
-  // SVG-Logomark: Haus-Symbol (Lucide "home" path, 24×24 viewBox)
+  // SVG-Logomark aus docs/logo.svg — Gradient via CSS-Tokens
   const logomark = document.createElement('div');
   logomark.className = 'nav-sidebar__logomark';
   logomark.setAttribute('aria-hidden', 'true');
-  const logoSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  logoSvg.setAttribute('viewBox', '0 0 24 24');
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const logoSvg = document.createElementNS(SVG_NS, 'svg');
+  logoSvg.setAttribute('viewBox', '0 0 160 160');
   logoSvg.setAttribute('fill', 'none');
-  logoSvg.setAttribute('stroke', 'currentColor');
-  logoSvg.setAttribute('stroke-width', '2.5');
-  logoSvg.setAttribute('stroke-linecap', 'round');
-  logoSvg.setAttribute('stroke-linejoin', 'round');
-  const housePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  housePath.setAttribute('d', 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z');
-  const doorPath = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-  doorPath.setAttribute('points', '9 22 9 12 15 12 15 22');
+  const defs = document.createElementNS(SVG_NS, 'defs');
+  const grad = document.createElementNS(SVG_NS, 'linearGradient');
+  grad.setAttribute('id', 'oikos-logo-bg');
+  grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0');
+  grad.setAttribute('x2', '160'); grad.setAttribute('y2', '160');
+  grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+  const stop0 = document.createElementNS(SVG_NS, 'stop');
+  stop0.setAttribute('offset', '0%');
+  stop0.style.stopColor = 'var(--color-accent)';
+  const stop1 = document.createElementNS(SVG_NS, 'stop');
+  stop1.setAttribute('offset', '100%');
+  stop1.style.stopColor = 'var(--color-accent-secondary)';
+  grad.appendChild(stop0); grad.appendChild(stop1);
+  defs.appendChild(grad);
+  logoSvg.appendChild(defs);
+  const bgRect = document.createElementNS(SVG_NS, 'rect');
+  bgRect.setAttribute('width', '160'); bgRect.setAttribute('height', '160');
+  bgRect.setAttribute('rx', '36'); bgRect.setAttribute('fill', 'url(#oikos-logo-bg)');
+  logoSvg.appendChild(bgRect);
+  const housePath = document.createElementNS(SVG_NS, 'path');
+  housePath.setAttribute('d', 'M80 36L36 72V120C36 122.2 37.8 124 40 124H68V96H92V124H120C122.2 124 124 122.2 124 120V72L80 36Z');
+  housePath.setAttribute('fill', 'white');
   logoSvg.appendChild(housePath);
-  logoSvg.appendChild(doorPath);
+  const chimney = document.createElementNS(SVG_NS, 'rect');
+  chimney.setAttribute('x', '100'); chimney.setAttribute('y', '46');
+  chimney.setAttribute('width', '12'); chimney.setAttribute('height', '22');
+  chimney.setAttribute('rx', '2'); chimney.setAttribute('fill', 'white');
+  logoSvg.appendChild(chimney);
   logomark.appendChild(logoSvg);
   sidebarLogo.appendChild(logomark);
 

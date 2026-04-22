@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.7] - 2026-04-22
+
+### Fixed
+- Navigation: sidebar logo now uses the official `docs/logo.svg` artwork (house + chimney on gradient background) instead of a generic Lucide home icon; gradient colors are driven by CSS tokens
+
 ## [0.23.6] - 2026-04-22
 
 ### Changed
