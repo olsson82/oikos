@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.14] - 2026-04-23
+
+### Fixed
+- Swedish (sv) locale: corrected five translation errors in the recipes section (`titleRequired`, `copySuffix`, `urlLabel`, `openLink`, `emptyDescription`) — contributed by @olsson82
+
 ## [0.23.13] - 2026-04-22
 
 ### Security
