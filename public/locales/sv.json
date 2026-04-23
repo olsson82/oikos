@@ -618,23 +618,23 @@
     "addRecipe": "Lägg till recept",
     "editRecipe": "Redigera recept",
     "emptyTitle": "Inga recept ännu",
-    "emptyDescription": "Spara dina favorit recept och återanvänd dom i måltidsplaneraren.",
+    "emptyDescription": "Spara dina favoritrecept och återanvänd dem i måltidsplaneraren.",
     "titleLabel": "Titel *",
     "titlePlaceholder": "ex. Pasta Carbonara",
     "notesLabel": "Notering",
     "notesPlaceholder": "Valfritt...",
-    "urlLabel": "Recept länk",
+    "urlLabel": "Receptlänk",
     "urlPlaceholder": "https://...",
     "ingredientsLabel": "Ingredienser",
     "addToMeals": "Lägg till i måltidsplaneraren",
-    "openLink": "Öppna recept länk",
+    "openLink": "Öppna receptlänk",
     "deleteConfirm": "Radera recept \"{{title}}\"?",
     "created": "Recept sparat.",
     "updated": "Recept uppdaterat.",
     "deleted": "Recept raderat.",
-    "titleRequired": "Titel är krävande",
+    "titleRequired": "Titel krävs",
     "duplicate": "Duplicera",
     "duplicated": "Recept duplicerat.",
-    "copySuffix": "kopiera"
+    "copySuffix": "kopia"
   }
 }
