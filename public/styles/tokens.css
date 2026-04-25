@@ -310,6 +310,7 @@
   --target-sm: 32px;
   --target-md: 40px;
   --target-lg: 48px;
+  --target-base: 44px;
 
   /* --------------------------------------------------------
    * 12. Layout
