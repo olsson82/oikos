@@ -528,17 +528,41 @@ function initSearch(container) {
   const results      = container.querySelector('#search-results');
   if (!searchBtn || !overlay || !input || !results) return;
 
+  // Leichtgewichtiger Focus Trap für das Search Overlay.
+  // Eigenständig (kein modal.js), da modul-globale Variablen in modal.js
+  // bei gleichzeitig offenem Modal überschrieben würden.
+  let _searchTrapHandler = null;
+
   function openSearch() {
     if (window._closeMoreSheet) window._closeMoreSheet();
     overlay.setAttribute('aria-hidden', 'false');
     overlay.classList.add('search-overlay--visible');
     setTimeout(() => input.focus(), 50);
     if (window.lucide) window.lucide.createIcons();
+
+    const FOCUSABLE = 'a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])';
+    _searchTrapHandler = (e) => {
+      if (e.key !== 'Tab') return;
+      const focusable = Array.from(overlay.querySelectorAll(FOCUSABLE));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    };
+    overlay.addEventListener('keydown', _searchTrapHandler);
   }
 
   function closeSearch() {
     overlay.setAttribute('aria-hidden', 'true');
     overlay.classList.remove('search-overlay--visible');
+    if (_searchTrapHandler) {
+      overlay.removeEventListener('keydown', _searchTrapHandler);
+      _searchTrapHandler = null;
+    }
     input.value = '';
     results.replaceChildren();
   }
