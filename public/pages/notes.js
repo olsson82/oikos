@@ -5,7 +5,7 @@
  */
 
 import { api } from '/api.js';
-import { openModal as openSharedModal, closeModal, btnError, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal, btnError } from '/components/modal.js';
 import { stagger, vibrate } from '/utils/ux.js';
 import { t } from '/i18n.js';
 import { esc } from '/utils/html.js';
@@ -476,16 +476,33 @@ async function togglePin(id) {
 }
 
 async function deleteNote(id) {
-  if (!await confirmModal(t('notes.deleteConfirm'), { danger: true, confirmLabel: t('common.delete') })) return;
-  try {
-    await api.delete(`/notes/${id}`);
-    state.notes = state.notes.filter((n) => n.id !== id);
-    renderGrid();
-    vibrate([30, 50, 30]);
-    window.oikos?.showToast(t('notes.deletedToast'), 'success');
-  } catch (err) {
-    window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'error');
-  }
+  closeModal();
+  const note = state.notes.find((n) => n.id === id);
+  state.notes = state.notes.filter((n) => n.id !== id);
+  renderGrid();
+  vibrate([30, 50, 30]);
+
+  let undone = false;
+  window.oikos?.showToast(t('notes.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (note) {
+      state.notes = [...state.notes, note].sort((a, b) => b.pinned - a.pinned);
+      renderGrid();
+    }
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/notes/${id}`);
+    } catch (err) {
+      if (note) {
+        state.notes = [...state.notes, note].sort((a, b) => b.pinned - a.pinned);
+        renderGrid();
+      }
+      window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'danger');
+    }
+  }, 5000);
 }
 
 // --------------------------------------------------------

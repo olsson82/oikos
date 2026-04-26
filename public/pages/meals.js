@@ -5,7 +5,7 @@
  */
 
 import { api } from '/api.js';
-import { openModal as openSharedModal, closeModal as closeSharedModal, selectModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal as closeSharedModal, selectModal } from '/components/modal.js';
 import { stagger } from '/utils/ux.js';
 import { t, formatDate } from '/i18n.js';
 import { esc } from '/utils/html.js';
@@ -920,15 +920,27 @@ function collectModalIngredients(overlay) {
 // --------------------------------------------------------
 
 async function deleteMeal(mealId) {
-  if (!await confirmModal(t('meals.deleteMeal') + '?', { danger: true, confirmLabel: t('common.delete') })) return;
-  try {
-    await api.delete(`/meals/${mealId}`);
-    state.meals = state.meals.filter((m) => m.id !== mealId);
-    renderWeekGrid();
-    window.oikos?.showToast(t('meals.deleteMeal'), 'success');
-  } catch (err) {
-    window.oikos?.showToast(err.data?.error ?? t('common.errorGeneric'), 'error');
-  }
+  const meal = state.meals.find((m) => m.id === mealId);
+  const itemEl = _container.querySelector(`.meal-slot--has-meal[data-meal-id="${mealId}"]`);
+  if (itemEl) itemEl.style.display = 'none';
+
+  let undone = false;
+  window.oikos?.showToast(t('meals.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (itemEl) itemEl.style.display = '';
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/meals/${mealId}`);
+      state.meals = state.meals.filter((m) => m.id !== mealId);
+      renderWeekGrid();
+    } catch (err) {
+      if (itemEl) itemEl.style.display = '';
+      window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'danger');
+    }
+  }, 5000);
 }
 
 // --------------------------------------------------------

@@ -6,7 +6,7 @@
 
 import { api } from '/api.js';
 import { renderRRuleFields, bindRRuleEvents, getRRuleValues } from '/rrule-ui.js';
-import { openModal as openSharedModal, closeModal, wireBlurValidation, validateAll, btnSuccess, btnError, promptModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal, wireBlurValidation, validateAll, btnSuccess, btnError, promptModal } from '/components/modal.js';
 import { stagger, vibrate } from '/utils/ux.js';
 import { t, formatDate, formatTime } from '/i18n.js';
 import { esc } from '/utils/html.js';
@@ -582,18 +582,29 @@ async function handleFormSubmit(e, container) {
 }
 
 async function handleDeleteTask(id, container) {
-  if (!await confirmModal(t('tasks.deleteConfirm'), { danger: true, confirmLabel: t('common.delete') })) return;
-  try {
-    await api.delete(`/tasks/${id}`);
-    // Erinnerungen für diese Aufgabe ebenfalls entfernen
-    api.delete(`/reminders?entity_type=task&entity_id=${id}`).catch(() => {});
-    refreshReminders();
-    closeModal();
-    window.oikos.showToast(t('tasks.deletedToast'), 'default');
-    await loadTasks(container);
-  } catch (err) {
-    window.oikos.showToast(err.message, 'danger');
-  }
+  closeModal();
+  const itemEl = container.querySelector(`[data-task-id="${id}"]`);
+  if (itemEl) itemEl.style.display = 'none';
+
+  let undone = false;
+  window.oikos.showToast(t('tasks.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (itemEl) itemEl.style.display = '';
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/tasks/${id}`);
+      // Erinnerungen für diese Aufgabe ebenfalls entfernen
+      api.delete(`/reminders?entity_type=task&entity_id=${id}`).catch(() => {});
+      refreshReminders();
+      await loadTasks(container);
+    } catch (err) {
+      if (itemEl) itemEl.style.display = '';
+      window.oikos.showToast(err.message ?? t('common.unknownError'), 'danger');
+    }
+  }, 5000);
 }
 
 async function handleAddSubtask(parentId, container) {

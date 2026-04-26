@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.25.3] - 2026-04-26
+
+### Changed
+- Delete actions in all seven modules (tasks, notes, budget, calendar, contacts, meals, recipes) and shopping list deletion no longer show a confirmation dialog; instead the item is removed immediately and a toast with an Undo button gives a 5-second window to reverse the action before the API call is made
+
 ## [0.25.2] - 2026-04-26
 
 ### Changed

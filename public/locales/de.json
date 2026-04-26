@@ -264,7 +264,8 @@
     "savedRecipeLabel": "Gespeichertes Rezept",
     "savedRecipePlaceholder": "Rezept auswählen",
     "saveAsRecipe": "Als Rezept speichern",
-    "recipeScaleLabel": "Zutaten skalieren"
+    "recipeScaleLabel": "Zutaten skalieren",
+    "deletedToast": "Mahlzeit gelöscht"
   },
   "calendar": {
     "title": "Kalender",

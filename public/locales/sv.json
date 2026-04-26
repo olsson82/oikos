@@ -258,7 +258,8 @@
     "savedRecipeLabel": "Sparat recept",
     "savedRecipePlaceholder": "Välj recept",
     "saveAsRecipe": "Spara som recept",
-    "recipeScaleLabel": "Skala ingredienser"
+    "recipeScaleLabel": "Skala ingredienser",
+    "deletedToast": "Meal deleted"
   },
   "calendar": {
     "title": "Kalender",

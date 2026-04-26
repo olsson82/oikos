@@ -5,7 +5,7 @@
 
 import { api } from '/api.js';
 import { t } from '/i18n.js';
-import { openModal as openSharedModal, closeModal as closeSharedModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal as closeSharedModal } from '/components/modal.js';
 import { DEFAULT_CATEGORY_NAME, categoryLabel } from '/utils/shopping-categories.js';
 
 let _container = null;
@@ -134,6 +134,7 @@ function renderRecipeList() {
   for (const recipe of state.recipes) {
     const card = document.createElement('article');
     card.className = 'recipe-card';
+    card.dataset.id = String(recipe.id);
 
     const h = document.createElement('h2');
     h.className = 'recipe-card__title';
@@ -370,21 +371,26 @@ async function saveRecipe(panel, mode, recipe) {
 }
 
 async function removeRecipe(recipe) {
-  const ok = await confirmModal(t('recipes.deleteConfirm', { title: recipe.title }), {
-    danger: true,
-    confirmLabel: t('common.delete'),
+  const itemEl = _container.querySelector(`.recipe-card[data-id="${recipe.id}"]`);
+  if (itemEl) itemEl.style.display = 'none';
+
+  let undone = false;
+  window.oikos?.showToast(t('recipes.deleted'), 'default', 5000, () => {
+    undone = true;
+    if (itemEl) itemEl.style.display = '';
   });
 
-  if (!ok) return;
-
-  try {
-    await api.delete(`/recipes/${recipe.id}`);
-    state.recipes = state.recipes.filter((r) => r.id !== recipe.id);
-    renderRecipeList();
-    window.oikos?.showToast(t('recipes.deleted'), 'success');
-  } catch (err) {
-    window.oikos?.showToast(err.data?.error ?? t('common.errorGeneric'), 'error');
-  }
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/recipes/${recipe.id}`);
+      state.recipes = state.recipes.filter((r) => r.id !== recipe.id);
+      renderRecipeList();
+    } catch (err) {
+      if (itemEl) itemEl.style.display = '';
+      window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'danger');
+    }
+  }, 5000);
 }
 
 async function duplicateRecipe(recipe) {

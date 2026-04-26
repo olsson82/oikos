@@ -6,7 +6,7 @@
 
 import { api } from '/api.js';
 import { renderRRuleFields, bindRRuleEvents, getRRuleValues } from '/rrule-ui.js';
-import { openModal as openSharedModal, closeModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal } from '/components/modal.js';
 import { stagger } from '/utils/ux.js';
 import { t, formatTime } from '/i18n.js';
 import { esc, fmtLocation } from '/utils/html.js';
@@ -764,7 +764,6 @@ function showEventPopup(ev, anchor) {
   });
 
   popup.querySelector('#popup-delete').addEventListener('click', async () => {
-    if (!await confirmModal(t('calendar.deleteConfirm', { title: ev.title }), { danger: true, confirmLabel: t('common.delete') })) return;
     popup.remove();
     await deleteEvent(ev.id);
   });
@@ -868,7 +867,6 @@ function openEventModal({ mode, event = null, date = null, reminder = null }) {
       panel.querySelector('#modal-cancel').addEventListener('click', closeModal);
 
       panel.querySelector('#modal-delete')?.addEventListener('click', async () => {
-        if (!await confirmModal(t('calendar.deleteConfirm', { title: event.title }), { danger: true, confirmLabel: t('common.delete') })) return;
         closeModal();
         await deleteEvent(event.id);
       });
@@ -1073,15 +1071,32 @@ async function saveEvent(overlay, mode, eventId, existingReminder = null) {
 }
 
 async function deleteEvent(id) {
-  try {
-    await api.delete(`/calendar/${id}`);
-    api.delete(`/reminders?entity_type=event&entity_id=${id}`).catch(() => {});
-    refreshReminders();
-    state.events = state.events.filter((e) => e.id !== id);
-    renderView();
-    window.oikos?.showToast(t('calendar.deletedToast'), 'success');
-  } catch (err) {
-    window.oikos?.showToast(err.data?.error ?? t('calendar.deleteError'), 'error');
-  }
+  const event = state.events.find((e) => e.id === id);
+  state.events = state.events.filter((e) => e.id !== id);
+  renderView();
+
+  let undone = false;
+  window.oikos?.showToast(t('calendar.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (event) {
+      state.events = [...state.events, event];
+      renderView();
+    }
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/calendar/${id}`);
+      api.delete(`/reminders?entity_type=event&entity_id=${id}`).catch(() => {});
+      refreshReminders();
+    } catch (err) {
+      if (event) {
+        state.events = [...state.events, event];
+        renderView();
+      }
+      window.oikos?.showToast(err.data?.error ?? t('calendar.deleteError'), 'danger');
+    }
+  }, 5000);
 }
 

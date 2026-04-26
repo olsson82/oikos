@@ -258,7 +258,8 @@
     "savedRecipeLabel": "Saved recipe",
     "savedRecipePlaceholder": "Select recipe",
     "saveAsRecipe": "Save as recipe",
-    "recipeScaleLabel": "Scale ingredients"
+    "recipeScaleLabel": "Scale ingredients",
+    "deletedToast": "Meal deleted"
   },
   "calendar": {
     "title": "Ημερολόγιο",
