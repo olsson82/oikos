@@ -267,6 +267,14 @@ async function renderPage(route, previousPath = null) {
 
     await module.render(pageWrapper, { user: currentUser });
 
+    // Route-Announcer: Screenreader über Seitenwechsel informieren (gezielt, nicht gesamter Inhalt)
+    const announcer = document.getElementById('route-announcer');
+    if (announcer) {
+      const pageLabel = navItems().find((n) => n.path === path)?.label ?? path;
+      announcer.textContent = '';
+      setTimeout(() => { announcer.textContent = pageLabel; }, 50);
+    }
+
     // Erst nach render() + CSS sichtbar machen und Animation starten
     pageWrapper.style.opacity = '';
     pageWrapper.classList.add(inClass);
@@ -356,7 +364,6 @@ function renderAppShell(container) {
   const main = document.createElement('main');
   main.className = 'app-content';
   main.id = 'main-content';
-  main.setAttribute('aria-live', 'polite');
 
   const bottomNav = document.createElement('nav');
   bottomNav.className = 'nav-bottom';
@@ -441,7 +448,13 @@ function renderAppShell(container) {
   toastContainer.id = 'toast-container';
   toastContainer.setAttribute('aria-live', 'assertive');
 
-  container.replaceChildren(skipLink, sidebar, main, bottomNav, backdrop, moreSheet, searchOverlay, toastContainer);
+  const routeAnnouncer = document.createElement('div');
+  routeAnnouncer.id = 'route-announcer';
+  routeAnnouncer.className = 'sr-only';
+  routeAnnouncer.setAttribute('aria-live', 'polite');
+  routeAnnouncer.setAttribute('aria-atomic', 'true');
+
+  container.replaceChildren(skipLink, sidebar, main, bottomNav, backdrop, moreSheet, searchOverlay, toastContainer, routeAnnouncer);
 
   // Klick-Handler für alle Nav-Links
   container.querySelectorAll('[data-route]').forEach((el) => {

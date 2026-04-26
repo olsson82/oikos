@@ -19,6 +19,17 @@ const NOTE_COLORS = [
   '#90CAF9', '#CE93D8', '#FFAB91', '#FFFFFF',
 ];
 
+const NOTE_COLOR_NAMES = () => ({
+  '#FFEB3B': t('notes.colorYellow'),
+  '#FFD54F': t('notes.colorAmber'),
+  '#A5D6A7': t('notes.colorGreen'),
+  '#80DEEA': t('notes.colorTeal'),
+  '#90CAF9': t('notes.colorBlue'),
+  '#CE93D8': t('notes.colorPurple'),
+  '#FFAB91': t('notes.colorOrange'),
+  '#FFFFFF': t('notes.colorWhite'),
+});
+
 // --------------------------------------------------------
 // State
 // --------------------------------------------------------
@@ -368,13 +379,16 @@ function openNoteModal({ mode, note = null }) {
                 style="resize:vertical;">${esc(isEdit ? note.content : '')}</textarea>
     </div>
     <div class="form-group">
-      <label class="form-label">${t('notes.colorLabel')}</label>
-      <div class="note-color-picker">
+      <label class="form-label" id="note-color-label">${t('notes.colorLabel')}</label>
+      <div class="note-color-picker" role="radiogroup" aria-labelledby="note-color-label">
         ${NOTE_COLORS.map((c) => `
           <div class="note-color-swatch ${c === selColor ? 'note-color-swatch--active' : ''}"
                data-color="${c}"
                style="background-color:${c};border:2px solid ${c === '#FFFFFF' ? '#E5E5EA' : c};"
-               role="radio" tabindex="0" aria-label="Farbe ${c}"></div>
+               role="radio"
+               tabindex="${c === selColor ? '0' : '-1'}"
+               aria-checked="${c === selColor ? 'true' : 'false'}"
+               aria-label="${NOTE_COLOR_NAMES()[c] ?? c}"></div>
         `).join('')}
       </div>
     </div>
@@ -396,11 +410,34 @@ function openNoteModal({ mode, note = null }) {
     content,
     size: 'md',
     onSave(panel) {
-      // Farb-Swatch
+      // Farb-Swatch: Auswahl + ARIA + Keyboard (Roving Tabindex)
+      function selectSwatch(target) {
+        panel.querySelectorAll('.note-color-swatch').forEach((s) => {
+          s.classList.remove('note-color-swatch--active');
+          s.setAttribute('aria-checked', 'false');
+          s.setAttribute('tabindex', '-1');
+        });
+        target.classList.add('note-color-swatch--active');
+        target.setAttribute('aria-checked', 'true');
+        target.setAttribute('tabindex', '0');
+      }
       panel.querySelectorAll('.note-color-swatch').forEach((sw) => {
-        sw.addEventListener('click', () => {
-          panel.querySelectorAll('.note-color-swatch').forEach((s) => s.classList.remove('note-color-swatch--active'));
-          sw.classList.add('note-color-swatch--active');
+        sw.addEventListener('click', () => { selectSwatch(sw); sw.focus(); });
+        sw.addEventListener('keydown', (e) => {
+          const swatches = [...panel.querySelectorAll('.note-color-swatch')];
+          const idx = swatches.indexOf(sw);
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = swatches[(idx + 1) % swatches.length];
+            selectSwatch(next); next.focus();
+          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prev = swatches[(idx - 1 + swatches.length) % swatches.length];
+            selectSwatch(prev); prev.focus();
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectSwatch(sw);
+          }
         });
       });
 

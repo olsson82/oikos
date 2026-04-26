@@ -46,6 +46,19 @@ const EVENT_COLORS = [
   '#8E8E93', '#30B0C7',
 ];
 
+const EVENT_COLOR_NAMES = () => ({
+  '#007AFF': t('calendar.colorBlue'),
+  '#34C759': t('calendar.colorGreen'),
+  '#FF9500': t('calendar.colorOrange'),
+  '#FF3B30': t('calendar.colorRed'),
+  '#AF52DE': t('calendar.colorPurple'),
+  '#FF6B35': t('calendar.colorCoral'),
+  '#5AC8FA': t('calendar.colorSkyBlue'),
+  '#FFCC00': t('calendar.colorYellow'),
+  '#8E8E93': t('calendar.colorGray'),
+  '#30B0C7': t('calendar.colorCyan'),
+});
+
 const HOUR_HEIGHT = 56; // px pro Stunde in Wochen-/Tagesansicht
 
 /**
@@ -843,15 +856,36 @@ function openEventModal({ mode, event = null, date = null, reminder = null }) {
 
       const selectedColor = isEdit ? (event?.color || EVENT_COLORS[0]) : EVENT_COLORS[0];
 
-      // Farb-Auswahl
-      panel.querySelectorAll('.color-swatch').forEach((sw) => {
-        sw.addEventListener('click', () => {
-          panel.querySelectorAll('.color-swatch').forEach((s) => s.classList.remove('color-swatch--active'));
-          sw.classList.add('color-swatch--active');
+      // Farb-Auswahl: Auswahl + ARIA + Keyboard (Roving Tabindex)
+      function selectSwatch(target) {
+        panel.querySelectorAll('.color-swatch').forEach((s) => {
+          s.classList.remove('color-swatch--active');
+          s.setAttribute('aria-checked', 'false');
+          s.setAttribute('tabindex', '-1');
         });
-      });
+        target.classList.add('color-swatch--active');
+        target.setAttribute('aria-checked', 'true');
+        target.setAttribute('tabindex', '0');
+      }
       panel.querySelectorAll('.color-swatch').forEach((sw) => {
-        if (sw.dataset.color === selectedColor) sw.classList.add('color-swatch--active');
+        if (sw.dataset.color === selectedColor) selectSwatch(sw);
+        sw.addEventListener('click', () => { selectSwatch(sw); sw.focus(); });
+        sw.addEventListener('keydown', (e) => {
+          const swatches = [...panel.querySelectorAll('.color-swatch')];
+          const idx = swatches.indexOf(sw);
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = swatches[(idx + 1) % swatches.length];
+            selectSwatch(next); next.focus();
+          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prev = swatches[(idx - 1 + swatches.length) % swatches.length];
+            selectSwatch(prev); prev.focus();
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectSwatch(sw);
+          }
+        });
       });
 
       // Ganztägig-Toggle
@@ -957,11 +991,14 @@ function buildEventModalContent({ mode, event, date, reminder = null }) {
     </div>
 
     <div class="form-group">
-      <label class="form-label">${t('calendar.colorLabel')}</label>
-      <div class="color-picker">
-        ${EVENT_COLORS.map((c) => `
+      <label class="form-label" id="event-color-label">${t('calendar.colorLabel')}</label>
+      <div class="color-picker" role="radiogroup" aria-labelledby="event-color-label">
+        ${EVENT_COLORS.map((c, i) => `
           <div class="color-swatch" data-color="${c}" style="background-color:${c};"
-               role="radio" tabindex="0" aria-label="${t('calendar.colorLabel', { color: c })}"></div>
+               role="radio"
+               tabindex="${i === 0 ? '0' : '-1'}"
+               aria-checked="false"
+               aria-label="${EVENT_COLOR_NAMES()[c] ?? c}"></div>
         `).join('')}
       </div>
     </div>

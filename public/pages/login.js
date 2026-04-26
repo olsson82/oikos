@@ -86,6 +86,8 @@ export async function render(container) {
 
     usernameGroup.classList.toggle('form-group--error', !username);
     passwordGroup.classList.toggle('form-group--error', !password);
+    usernameInput.setAttribute('aria-invalid', String(!username));
+    passwordInput.setAttribute('aria-invalid', String(!password));
 
     if (!username || !password) {
       if (!username) usernameInput.focus();
@@ -117,11 +119,13 @@ export async function render(container) {
     }
   });
 
-  form.querySelector('#username').addEventListener('input', () => {
-    form.querySelector('#username').closest('.form-group').classList.remove('form-group--error');
+  form.querySelector('#username').addEventListener('input', (e) => {
+    e.currentTarget.closest('.form-group').classList.remove('form-group--error');
+    e.currentTarget.removeAttribute('aria-invalid');
   });
-  form.querySelector('#password').addEventListener('input', () => {
-    form.querySelector('#password').closest('.form-group').classList.remove('form-group--error');
+  form.querySelector('#password').addEventListener('input', (e) => {
+    e.currentTarget.closest('.form-group').classList.remove('form-group--error');
+    e.currentTarget.removeAttribute('aria-invalid');
   });
 }
 
