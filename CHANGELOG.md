@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.4] - 2026-04-26
+
+### Added
+- Accessibility: `layout.css` now has a `@media (prefers-contrast: more)` block — ghost and secondary buttons get explicit borders, cards lose decorative shadows, form inputs get a 2px border, focus rings become thicker (3px, 4px offset), and active nav items get an underline as a colour-independent indicator
+
+### Fixed
+- Design tokens: corrected `--sidebar-width-expanded` comment from `1280px+` to `1440px+` to match the actual breakpoint in `layout.css`
+
 ## [0.24.3] - 2026-04-26
 
 ### Added
