@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-04-27
+
+### Added
+- Settings: family roles (Dad, Mom, Parent, Child, Grandparent, Relative, Family member) are now separate from system access roles — each family member can have a descriptive family role independent of their admin status
+- Settings: profile picture upload for the current user (PNG, JPEG, WebP; auto-resized to 512 px on the client side)
+- Settings: admin users can now edit existing family member profiles (name, username, family role, system-admin flag, color, profile picture) via a new Edit button on each member row
+- Settings: new System admin checkbox replaces the Admin/Member role dropdown when creating a new family member
+- Dashboard: family widget avatars now display profile pictures when available
+- API: new read-only `GET /api/v1/family/members` endpoint listing family members without exposing usernames or system roles
+- API: `PATCH /api/v1/auth/users/:id` — admin endpoint to update any family member's profile
+- API: `PATCH /api/v1/auth/me/profile` — self-service endpoint to update own display name, color, and profile picture
+- i18n: new locale keys for all new UI strings across all 16 supported languages
+
 ## [0.26.5] - 2026-04-27
 
 ### Changed
