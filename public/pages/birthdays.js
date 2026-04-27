@@ -366,7 +366,7 @@ function openBirthdayModal({ mode, birthday = null }) {
           renderUpcoming();
           renderSuggestions();
           renderList();
-          closeModal();
+          closeModal({ force: true });
         } catch (err) {
           window.oikos?.showToast(err.message, 'danger');
           saveBtn.disabled = false;

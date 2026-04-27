@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.3] - 2026-04-27
+
+### Fixed
+- Birthdays: "Discard changes?" dialog appeared immediately after successfully saving a birthday because `closeModal()` was called without `force: true`, triggering the dirty-form check on a programmatic close
+- Dashboard (PWA): widget items (tasks, events, meals, notes, birthdays, shopping lists) occasionally blocked vertical swipe-to-scroll; added `touch-action: pan-y` so the browser passes vertical pan gestures through to the scroll container
+
 ## [0.26.2] - 2026-04-27
 
 ### Fixed

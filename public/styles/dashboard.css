@@ -427,6 +427,7 @@
   padding: var(--space-2) 0;
   border-bottom: 1px solid var(--color-border-subtle);
   cursor: pointer;
+  touch-action: pan-y;
   transition: opacity var(--transition-fast);
 }
 
@@ -507,6 +508,7 @@
   padding: var(--space-2) 0;
   border-bottom: 1px solid var(--color-border-subtle);
   cursor: pointer;
+  touch-action: pan-y;
   transition: opacity var(--transition-fast);
 }
 
@@ -594,6 +596,7 @@
   padding: var(--space-2) var(--space-1);
   background-color: var(--color-surface);
   cursor: pointer;
+  touch-action: pan-y;
   transition: background-color var(--transition-fast);
   text-align: center;
   min-height: 72px;
@@ -683,6 +686,7 @@
  * -------------------------------------------------------- */
 .shopping-widget-list {
   cursor: pointer;
+  touch-action: pan-y;
   transition: background-color var(--transition-fast);
   border-radius: var(--radius-sm);
   padding: var(--space-2) 0;
@@ -794,6 +798,7 @@
   border-radius: var(--radius-sm);
   padding: var(--space-3);
   cursor: pointer;
+  touch-action: pan-y;
   transition: opacity var(--transition-fast), transform var(--transition-fast);
   border-left: 3px solid var(--note-color, var(--color-accent));
   background-color: color-mix(in srgb, var(--note-color, var(--color-accent)) 6%, var(--color-surface-2));
@@ -2262,6 +2267,7 @@
   border: 1px solid color-mix(in srgb, var(--color-border) 72%, transparent);
   background: var(--color-surface-2);
   cursor: pointer;
+  touch-action: pan-y;
 }
 
 .birthday-widget-item + .birthday-widget-item {
