@@ -898,8 +898,8 @@
 }
 
 .modal-panel__close {
-  width: var(--target-md);
-  height: var(--target-md);
+  width: var(--target-base);
+  height: var(--target-base);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -371,11 +371,16 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-0h);
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+  min-height: var(--target-base);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  margin-right: calc(-1 * var(--space-2));
 }
 
 .widget__link:hover {
-  opacity: 0.7;
+  opacity: 1;
+  background-color: color-mix(in srgb, var(--widget-accent, var(--color-accent)) 10%, transparent);
 }
 
 .widget__badge {
