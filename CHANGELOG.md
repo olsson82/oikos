@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.1] - 2026-04-27
+
+### Fixed
+- Google Calendar: null/undefined items returned by the Google API are now skipped instead of crashing the sync with a `TypeError`
+- Google Calendar: the OAuth callback now awaits the initial sync before redirecting, so sync failures are correctly shown as an error in the UI instead of a false success
+
 ## [0.27.0] - 2026-04-27
 
 ### Added
