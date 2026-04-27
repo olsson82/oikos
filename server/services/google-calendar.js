@@ -267,7 +267,7 @@ function upsertGoogleEvents(items, calRefId = null, calColor = GOOGLE_COLOR) {
     DELETE FROM calendar_events WHERE external_calendar_id = ? AND external_source = 'google'
   `);
 
-  const insertOrUpdate = db.transaction((item) => {
+  const insertOrUpdate = db.get().transaction((item) => {
     if (item.status === 'cancelled') {
       del.run(item.id);
       return;
