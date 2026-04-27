@@ -69,8 +69,15 @@ function showBrowserNotification(title, body) {
  * @param {number} count
  */
 function updateBellBadge(count) {
+  const navLabel = count > 0
+    ? t(count === 1 ? 'reminders.pendingBadgeTitle' : 'reminders.pendingBadgeTitlePlural', { count })
+    : t('nav.reminders');
+  document.querySelectorAll('[data-route="/reminders"]').forEach((navItem) => {
+    navItem.setAttribute('aria-label', navLabel);
+  });
   document.querySelectorAll('.reminder-bell-badge').forEach((badge) => {
     if (count > 0) {
+      badge.setAttribute('aria-hidden', 'true');
       badge.textContent = count > 9 ? '9+' : String(count);
       badge.hidden = false;
     } else {

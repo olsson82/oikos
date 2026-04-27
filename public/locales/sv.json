@@ -272,7 +272,8 @@
     "savedRecipeLabel": "Sparat recept",
     "savedRecipePlaceholder": "Välj recept",
     "saveAsRecipe": "Spara som recept",
-    "recipeScaleLabel": "Skala ingredienser"
+    "recipeScaleLabel": "Skala ingredienser",
+    "deletedToast": "Meal deleted"
   },
   "calendar": {
     "title": "Kalender",
@@ -751,7 +752,9 @@
   },
   "modal": {
     "closeLabel": "Stäng",
-    "overlayLabel": "Bakgrund för modal dialog"
+    "overlayLabel": "Bakgrund för modal dialog",
+    "unsavedChanges": "Ignorera ändringar?",
+    "discardChanges": "Ignorera"
   },
   "rrule": {
     "freqNone": "Ingen upprepning",
@@ -854,5 +857,16 @@
     "notificationEnabled": "Notiser aktiva",
     "notificationDenied": "Notiser blockerade",
     "notificationHint": "Få notiser även när appen är öppen."
+  },
+  "onboarding": {
+    "step1Title": "Welcome to Oikos",
+    "step1Body": "Your personal family planner. Tasks, calendar, shopping and more – all in one place.",
+    "step2Title": "Everything at a glance",
+    "step2Body": "Use the navigation below to reach all modules. The + button creates new entries quickly.",
+    "step3Title": "Ready to go",
+    "step3Body": "The dashboard shows you the most important information at a glance. Customize it under \"Customize\".",
+    "next": "Next",
+    "done": "Get started",
+    "skip": "Skip"
   }
 }

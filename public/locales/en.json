@@ -272,7 +272,8 @@
     "savedRecipeLabel": "Saved recipe",
     "savedRecipePlaceholder": "Select recipe",
     "saveAsRecipe": "Save as recipe",
-    "recipeScaleLabel": "Scale ingredients"
+    "recipeScaleLabel": "Scale ingredients",
+    "deletedToast": "Meal deleted"
   },
   "calendar": {
     "title": "Calendar",
@@ -751,7 +752,9 @@
   },
   "modal": {
     "closeLabel": "Close",
-    "overlayLabel": "Modal dialog background"
+    "overlayLabel": "Modal dialog background",
+    "unsavedChanges": "Discard changes?",
+    "discardChanges": "Discard"
   },
   "rrule": {
     "freqNone": "No recurrence",
@@ -855,5 +858,16 @@
     "open": "Open search",
     "placeholder": "Search…",
     "noResults": "No results found."
+  },
+  "onboarding": {
+    "step1Title": "Welcome to Oikos",
+    "step1Body": "Your personal family planner. Tasks, calendar, shopping and more – all in one place.",
+    "step2Title": "Everything at a glance",
+    "step2Body": "Use the navigation below to reach all modules. The + button creates new entries quickly.",
+    "step3Title": "Ready to go",
+    "step3Body": "The dashboard shows you the most important information at a glance. Customize it under \"Customize\".",
+    "next": "Next",
+    "done": "Get started",
+    "skip": "Skip"
   }
 }

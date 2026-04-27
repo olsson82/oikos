@@ -12,11 +12,105 @@ import { openModal, closeModal } from '/components/modal.js';
 // Hält den AbortController des aktuellen FAB-Listeners - wird bei jedem render() erneuert.
 let _fabController = null;
 
+// ── Onboarding ──────────────────────────────────────────────────────────────
+
+const ONBOARDING_KEY = 'oikos-onboarded';
+
+function getOnboardingSteps() {
+  return [
+    { icon: 'home',         title: t('onboarding.step1Title'), body: t('onboarding.step1Body') },
+    { icon: 'grid-2x2',    title: t('onboarding.step2Title'), body: t('onboarding.step2Body') },
+    { icon: 'circle-check', title: t('onboarding.step3Title'), body: t('onboarding.step3Body') },
+  ];
+}
+
+function showOnboarding(appContainer) {
+  const steps = getOnboardingSteps();
+  let current = 0;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'onboarding-overlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+
+  function renderStep() {
+    const step = steps[current];
+    const isLast = current === steps.length - 1;
+    overlay.replaceChildren();
+
+    const card = document.createElement('div');
+    card.className = 'onboarding-card';
+
+    const icon = document.createElement('i');
+    icon.dataset.lucide = step.icon;
+    icon.className = 'onboarding-icon';
+    icon.setAttribute('aria-hidden', 'true');
+
+    const title = document.createElement('h2');
+    title.className = 'onboarding-title';
+    title.textContent = step.title;
+
+    const body = document.createElement('p');
+    body.className = 'onboarding-body';
+    body.textContent = step.body;
+
+    const dots = document.createElement('div');
+    dots.className = 'onboarding-dots';
+    steps.forEach((_, i) => {
+      const dot = document.createElement('span');
+      dot.className = `onboarding-dot${i === current ? ' onboarding-dot--active' : ''}`;
+      dots.appendChild(dot);
+    });
+
+    const actions = document.createElement('div');
+    actions.className = 'onboarding-actions';
+
+    const skipBtn = document.createElement('button');
+    skipBtn.className = 'btn btn--ghost';
+    skipBtn.textContent = t('onboarding.skip');
+    skipBtn.addEventListener('click', finish);
+
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'btn btn--primary';
+    nextBtn.textContent = isLast ? t('onboarding.done') : t('onboarding.next');
+    nextBtn.addEventListener('click', () => {
+      if (isLast) { finish(); return; }
+      current++;
+      renderStep();
+      if (window.lucide) window.lucide.createIcons({ el: overlay });
+      nextBtn.focus();
+    });
+
+    actions.appendChild(skipBtn);
+    actions.appendChild(nextBtn);
+    card.appendChild(icon);
+    card.appendChild(title);
+    card.appendChild(body);
+    card.appendChild(dots);
+    card.appendChild(actions);
+    overlay.appendChild(card);
+
+    if (window.lucide) window.lucide.createIcons({ el: overlay });
+    setTimeout(() => nextBtn.focus(), 50);
+  }
+
+  function finish() {
+    localStorage.setItem(ONBOARDING_KEY, '1');
+    overlay.classList.add('onboarding-overlay--out');
+    overlay.addEventListener('animationend', () => overlay.remove(), { once: true });
+    // Fallback falls animationend nicht feuert (prefers-reduced-motion):
+    setTimeout(() => overlay.remove(), 300);
+  }
+
+  renderStep();
+  appContainer.appendChild(overlay);
+}
+
 // --------------------------------------------------------
 // Widget-Definitionen (Reihenfolge = Standard-Layout)
 // --------------------------------------------------------
 
-const WIDGET_IDS = ['tasks', 'calendar', 'birthdays', 'budget', 'family', 'weather', 'shopping', 'meals', 'notes'];
+const WIDGET_IDS = ['weather', 'tasks', 'calendar', 'birthdays', 'budget', 'family', 'shopping', 'meals', 'notes'];
 
 const DEFAULT_WIDGET_CONFIG = WIDGET_IDS.map((id) => ({ id, visible: true }));
 
@@ -427,24 +521,9 @@ function renderQuickAction({ route, label, icon, tone = '' }) {
   `;
 }
 
-function renderKpiTile({ title, value, meta, icon, route, tone = '' }) {
-  return `
-    <button type="button" class="dashboard-kpi ${tone ? `dashboard-kpi--${tone}` : ''}" data-route="${route}">
-      <span class="dashboard-kpi__icon"><i data-lucide="${icon}" aria-hidden="true"></i></span>
-      <span class="dashboard-kpi__body">
-        <span class="dashboard-kpi__label">${title}</span>
-        <span class="dashboard-kpi__value">${value}</span>
-        <span class="dashboard-kpi__meta">${meta}</span>
-      </span>
-    </button>
-  `;
-}
 
-function renderDashboardOverview(user, stats = null, weather = null) {
+function renderDashboardOverview(user) {
   const dateLabel = formatDate(new Date());
-  const weatherLabel = weather
-    ? `${esc(weather.city)} · ${esc(weather.current?.temp)}${weather.units === 'imperial' ? '°F' : weather.units === 'standard' ? 'K' : '°C'}`
-    : t('dashboard.weather');
 
   const actions = [
     { route: '/tasks', label: t('nav.tasks'), icon: 'check-square', tone: 'blue' },
@@ -452,64 +531,6 @@ function renderDashboardOverview(user, stats = null, weather = null) {
     { route: '/shopping', label: t('nav.shopping'), icon: 'shopping-cart', tone: 'green' },
     { route: '/notes', label: t('nav.notes'), icon: 'sticky-note', tone: 'amber' },
   ].map(renderQuickAction).join('');
-
-  const kpis = stats ? [
-    renderKpiTile({
-      title: t('tasks.title'),
-      value: String(stats.overdueCount ?? 0),
-      meta: t('dashboard.overdue'),
-      icon: 'alert-circle',
-      route: '/tasks',
-      tone: 'danger',
-    }),
-    renderKpiTile({
-      title: t('nav.calendar'),
-      value: String(stats.todayEventCount ?? 0),
-      meta: t('common.today'),
-      icon: 'calendar-days',
-      route: '/calendar',
-      tone: 'calendar',
-    }),
-    renderKpiTile({
-      title: t('nav.meals'),
-      value: stats.todayMealTitle ? esc(stats.todayMealTitle) : '-',
-      meta: t('dashboard.todayMeals'),
-      icon: 'utensils',
-      route: '/meals',
-      tone: 'meals',
-    }),
-    renderKpiTile({
-      title: t('dashboard.weather'),
-      value: weatherLabel,
-      meta: t('dashboard.weatherRefreshTitle'),
-      icon: 'cloud-sun',
-      route: '/',
-      tone: 'weather',
-    }),
-    renderKpiTile({
-      title: t('nav.birthdays'),
-      value: String(stats.birthdayCount ?? 0),
-      meta: t('dashboard.upcomingBirthdays'),
-      icon: 'cake',
-      route: '/birthdays',
-      tone: 'birthdays',
-    }),
-    renderKpiTile({
-      title: t('dashboard.familyMembers'),
-      value: String(stats.familyCount ?? 0),
-      meta: t('dashboard.participantsAdded'),
-      icon: 'users',
-      route: '/settings',
-      tone: 'family',
-    }),
-  ].join('') : `
-    <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-    <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-    <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-    <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-    <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-    <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-  `;
 
   return `
     <section class="dashboard-overview">
@@ -526,35 +547,13 @@ function renderDashboardOverview(user, stats = null, weather = null) {
           </button>
         </div>
       </div>
-      <div class="dashboard-kpi-grid">
-        ${kpis}
-      </div>
     </section>
   `;
 }
 
-function widgetRegion(id) {
-  return ['budget', 'family', 'weather', 'shopping', 'meals'].includes(id) ? 'side' : 'main';
-}
-
 function widgetTileClass(id) {
-  const map = {
-    tasks: 'dashboard-tile--wide',
-    calendar: 'dashboard-tile--compact',
-    birthdays: 'dashboard-tile--compact',
-    budget: 'dashboard-tile--wide',
-    family: 'dashboard-tile--compact',
-    meals: 'dashboard-tile--compact',
-    notes: 'dashboard-tile--wide',
-    shopping: 'dashboard-tile--compact',
-    weather: 'dashboard-tile--wide',
-  };
-  return map[id] || 'dashboard-tile--compact';
-}
-
-function renderDashboardTile(id, html) {
-  if (!html) return '';
-  return `<section class="dashboard-tile dashboard-tile--${id} ${widgetTileClass(id)}">${html}</section>`;
+  const wideIds = ['tasks', 'budget', 'notes', 'weather'];
+  return wideIds.includes(id) ? 'widget--wide' : '';
 }
 
 function renderDashboardLayout(cfg, data, weather, currency) {
@@ -570,31 +569,16 @@ function renderDashboardLayout(cfg, data, weather, currency) {
     weather: () => (weather ? renderWeatherWidget(weather) : ''),
   };
 
-  const visible = cfg.filter((w) => w.visible && widgetById[w.id]);
-  const mainTiles = visible
-    .filter((w) => widgetRegion(w.id) === 'main')
-    .map((w) => renderDashboardTile(w.id, widgetById[w.id]()))
+  const tiles = cfg
+    .filter((w) => w.visible && widgetById[w.id])
+    .map((w) => {
+      const html = widgetById[w.id]();
+      if (!html) return '';
+      return `<div class="widget-wrapper ${widgetTileClass(w.id)}">${html}</div>`;
+    })
     .join('');
 
-  const sideTiles = visible
-    .filter((w) => widgetRegion(w.id) === 'side')
-    .map((w) => renderDashboardTile(w.id, widgetById[w.id]()))
-    .join('');
-
-  return `
-    <section class="dashboard-workspace">
-      <div class="dashboard-workspace__main">
-        <div class="dashboard-widget-grid">
-          ${mainTiles}
-        </div>
-      </div>
-      <aside class="dashboard-workspace__side">
-        <div class="dashboard-side-stack">
-          ${sideTiles}
-        </div>
-      </aside>
-    </section>
-  `;
+  return `<div class="dashboard__grid">${tiles}</div>`;
 }
 
 function renderDashboardSkeleton() {
@@ -606,32 +590,15 @@ function renderDashboardSkeleton() {
           <div class="skeleton skeleton-line skeleton-line--medium"></div>
         </div>
       </div>
-      <div class="dashboard-kpi-grid">
-        <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-        <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-        <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-        <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-        <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-        <div class="dashboard-kpi dashboard-kpi--skeleton"></div>
-      </div>
     </section>
-    <section class="dashboard-workspace">
-      <div class="dashboard-workspace__main">
-        <div class="dashboard-widget-grid">
-          ${skeletonWidget(3)}
-          ${skeletonWidget(3)}
-          ${skeletonWidget(2)}
-          ${skeletonWidget(3)}
-        </div>
-      </div>
-      <aside class="dashboard-workspace__side">
-        <div class="dashboard-side-stack">
-          ${skeletonWidget(3)}
-          ${skeletonWidget(3)}
-          ${skeletonWidget(2)}
-        </div>
-      </aside>
-    </section>
+    <div class="dashboard__grid">
+      ${skeletonWidget(3)}
+      ${skeletonWidget(3)}
+      ${skeletonWidget(2)}
+      ${skeletonWidget(3)}
+      ${skeletonWidget(3)}
+      ${skeletonWidget(2)}
+    </div>
   `;
 }
 
@@ -919,7 +886,7 @@ function openCustomizeModal(currentConfig, onSave) {
         saveBtn.disabled = true;
         try {
           await api.put('/preferences', { dashboard_widgets: draft });
-          closeModal();
+          closeModal({ force: true });
           onSave(draft);
           window.oikos?.showToast(t('dashboard.customizeSaved'), 'success', 1500);
         } catch {
@@ -956,7 +923,7 @@ function openTaskQuickAction(taskId, taskTitle, rerender) {
       panel.querySelector('[data-action="done"]').addEventListener('click', async () => {
         try {
           await api.patch(`/tasks/${taskId}/status`, { status: 'done' });
-          closeModal();
+          closeModal({ force: true });
           window.oikos?.showToast(t('tasks.swipedDoneToast'), 'success');
           rerender();
         } catch (err) {
@@ -964,7 +931,7 @@ function openTaskQuickAction(taskId, taskTitle, rerender) {
         }
       });
       panel.querySelector('[data-action="edit"]').addEventListener('click', () => {
-        closeModal();
+        closeModal({ force: true });
         window.oikos.navigate(`/tasks?open=${taskId}`);
       });
     },
@@ -1036,35 +1003,16 @@ export async function render(container, { user }) {
     window.oikos?.showToast(t('dashboard.loadError'), 'warning');
   }
 
-  const today = new Date().toDateString();
-  const stats = {
-    overdueCount: (data.urgentTasks ?? []).filter((t) => {
-      const due = formatDueDate(t.due_date, t.due_time);
-      return due?.overdue === true;
-    }).length,
-    dueSoonCount: (data.urgentTasks ?? []).filter((t) => {
-      const due = formatDueDate(t.due_date, t.due_time);
-      return due?.soon === true;
-    }).length,
-    todayEventCount: (data.upcomingEvents ?? []).filter((e) =>
-      new Date(e.start_datetime).toDateString() === today
-    ).length,
-    todayMealTitle: (data.todayMeals ?? []).find((m) => m.meal_type === 'lunch')?.title
-      ?? (data.todayMeals ?? [])[0]?.title
-      ?? null,
-    birthdayCount: data.birthdayCount ?? (data.birthdays ?? []).length,
-    familyCount: (data.users ?? []).length,
-  };
-
   const rerender = () => render(container, { user });
 
   function rebuildDashboard(cfg) {
     const shell = container.querySelector('#dashboard-shell');
     if (!shell) return;
-    shell.innerHTML = `
-      ${renderDashboardOverview(user, stats, weather)}
+    shell.replaceChildren();
+    shell.insertAdjacentHTML('beforeend', `
+      ${renderDashboardOverview(user)}
       ${renderDashboardLayout(cfg, data, weather, currency)}
-    `;
+    `);
     wireLinks(container, rerender);
     if (window.lucide) window.lucide.createIcons();
     wireWeatherRefresh(container, (updatedWeather) => {
@@ -1095,6 +1043,10 @@ export async function render(container, { user }) {
     };
     const timerId = setInterval(doAutoRefresh, 30 * 60 * 1000);
     _fabController.signal.addEventListener('abort', () => clearInterval(timerId));
+  }
+
+  if (!localStorage.getItem(ONBOARDING_KEY)) {
+    setTimeout(() => showOnboarding(container), 400);
   }
 }
 

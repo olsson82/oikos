@@ -6,7 +6,7 @@
  */
 
 import { api } from '/api.js';
-import { openModal as openSharedModal, closeModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal } from '/components/modal.js';
 import { stagger, vibrate } from '/utils/ux.js';
 import { t, formatDate, getLocale } from '/i18n.js';
 import { esc } from '/utils/html.js';
@@ -607,7 +607,7 @@ function openBudgetModal({ mode, entry = null }) {
       panel.querySelector('#bm-cancel').addEventListener('click', closeModal);
 
       panel.querySelector('#bm-delete')?.addEventListener('click', async () => {
-        closeModal();
+        closeModal({ force: true });
         await deleteEntry(entry.id);
       });
 
@@ -642,7 +642,7 @@ function openBudgetModal({ mode, entry = null }) {
           const sumRes  = await api.get(`/budget/summary?month=${state.month}`);
           state.summary = sumRes.data;
 
-          closeModal();
+          closeModal({ force: true });
           renderBody();
           window.oikos?.showToast(mode === 'create' ? t('budget.addedToast') : t('budget.savedToast'), 'success');
         } catch (err) {
@@ -660,18 +660,35 @@ function openBudgetModal({ mode, entry = null }) {
 // --------------------------------------------------------
 
 async function deleteEntry(id) {
-  if (!await confirmModal(t('budget.deleteConfirm'), { danger: true, confirmLabel: t('common.delete') })) return;
-  try {
-    await api.delete(`/budget/${id}`);
-    state.entries = state.entries.filter((e) => e.id !== id);
-    const sumRes  = await api.get(`/budget/summary?month=${state.month}`);
-    state.summary = sumRes.data;
-    renderBody();
-    vibrate([30, 50, 30]);
-    window.oikos?.showToast(t('budget.deletedToast'), 'success');
-  } catch (err) {
-    window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'error');
-  }
+  const entry = state.entries.find((e) => e.id === id);
+  state.entries = state.entries.filter((e) => e.id !== id);
+  renderBody();
+  vibrate([30, 50, 30]);
+
+  let undone = false;
+  window.oikos?.showToast(t('budget.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (entry) {
+      state.entries = [...state.entries, entry].sort((a, b) => new Date(b.date) - new Date(a.date));
+      renderBody();
+    }
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/budget/${id}`);
+      const sumRes  = await api.get(`/budget/summary?month=${state.month}`);
+      state.summary = sumRes.data;
+      renderBody();
+    } catch (err) {
+      if (entry) {
+        state.entries = [...state.entries, entry].sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderBody();
+      }
+      window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'danger');
+    }
+  }, 5000);
 }
 
 // --------------------------------------------------------

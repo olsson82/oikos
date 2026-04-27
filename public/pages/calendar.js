@@ -6,7 +6,7 @@
 
 import { api } from '/api.js';
 import { renderRRuleFields, bindRRuleEvents, getRRuleValues } from '/rrule-ui.js';
-import { openModal as openSharedModal, closeModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal } from '/components/modal.js';
 import { stagger } from '/utils/ux.js';
 import { t, formatTime } from '/i18n.js';
 import { esc, fmtLocation } from '/utils/html.js';
@@ -45,6 +45,19 @@ const EVENT_COLORS = [
   '#AF52DE', '#FF6B35', '#5AC8FA', '#FFCC00',
   '#8E8E93', '#30B0C7',
 ];
+
+const EVENT_COLOR_NAMES = () => ({
+  '#007AFF': t('calendar.colorBlue'),
+  '#34C759': t('calendar.colorGreen'),
+  '#FF9500': t('calendar.colorOrange'),
+  '#FF3B30': t('calendar.colorRed'),
+  '#AF52DE': t('calendar.colorPurple'),
+  '#FF6B35': t('calendar.colorCoral'),
+  '#5AC8FA': t('calendar.colorSkyBlue'),
+  '#FFCC00': t('calendar.colorYellow'),
+  '#8E8E93': t('calendar.colorGray'),
+  '#30B0C7': t('calendar.colorCyan'),
+});
 
 const HOUR_HEIGHT = 56; // px pro Stunde in Wochen-/Tagesansicht
 
@@ -764,7 +777,6 @@ function showEventPopup(ev, anchor) {
   });
 
   popup.querySelector('#popup-delete').addEventListener('click', async () => {
-    if (!await confirmModal(t('calendar.deleteConfirm', { title: ev.title }), { danger: true, confirmLabel: t('common.delete') })) return;
     popup.remove();
     await deleteEvent(ev.id);
   });
@@ -844,15 +856,36 @@ function openEventModal({ mode, event = null, date = null, reminder = null }) {
 
       const selectedColor = isEdit ? (event?.color || EVENT_COLORS[0]) : EVENT_COLORS[0];
 
-      // Farb-Auswahl
-      panel.querySelectorAll('.color-swatch').forEach((sw) => {
-        sw.addEventListener('click', () => {
-          panel.querySelectorAll('.color-swatch').forEach((s) => s.classList.remove('color-swatch--active'));
-          sw.classList.add('color-swatch--active');
+      // Farb-Auswahl: Auswahl + ARIA + Keyboard (Roving Tabindex)
+      function selectSwatch(target) {
+        panel.querySelectorAll('.color-swatch').forEach((s) => {
+          s.classList.remove('color-swatch--active');
+          s.setAttribute('aria-checked', 'false');
+          s.setAttribute('tabindex', '-1');
         });
-      });
+        target.classList.add('color-swatch--active');
+        target.setAttribute('aria-checked', 'true');
+        target.setAttribute('tabindex', '0');
+      }
       panel.querySelectorAll('.color-swatch').forEach((sw) => {
-        if (sw.dataset.color === selectedColor) sw.classList.add('color-swatch--active');
+        if (sw.dataset.color === selectedColor) selectSwatch(sw);
+        sw.addEventListener('click', () => { selectSwatch(sw); sw.focus(); });
+        sw.addEventListener('keydown', (e) => {
+          const swatches = [...panel.querySelectorAll('.color-swatch')];
+          const idx = swatches.indexOf(sw);
+          if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = swatches[(idx + 1) % swatches.length];
+            selectSwatch(next); next.focus();
+          } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prev = swatches[(idx - 1 + swatches.length) % swatches.length];
+            selectSwatch(prev); prev.focus();
+          } else if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectSwatch(sw);
+          }
+        });
       });
 
       // Ganztägig-Toggle
@@ -868,8 +901,7 @@ function openEventModal({ mode, event = null, date = null, reminder = null }) {
       panel.querySelector('#modal-cancel').addEventListener('click', closeModal);
 
       panel.querySelector('#modal-delete')?.addEventListener('click', async () => {
-        if (!await confirmModal(t('calendar.deleteConfirm', { title: event.title }), { danger: true, confirmLabel: t('common.delete') })) return;
-        closeModal();
+        closeModal({ force: true });
         await deleteEvent(event.id);
       });
 
@@ -959,11 +991,14 @@ function buildEventModalContent({ mode, event, date, reminder = null }) {
     </div>
 
     <div class="form-group">
-      <label class="form-label">${t('calendar.colorLabel')}</label>
-      <div class="color-picker">
-        ${EVENT_COLORS.map((c) => `
+      <label class="form-label" id="event-color-label">${t('calendar.colorLabel')}</label>
+      <div class="color-picker" role="radiogroup" aria-labelledby="event-color-label">
+        ${EVENT_COLORS.map((c, i) => `
           <div class="color-swatch" data-color="${c}" style="background-color:${c};"
-               role="radio" tabindex="0" aria-label="${t('calendar.colorLabel', { color: c })}"></div>
+               role="radio"
+               tabindex="${i === 0 ? '0' : '-1'}"
+               aria-checked="false"
+               aria-label="${EVENT_COLOR_NAMES()[c] ?? c}"></div>
         `).join('')}
       </div>
     </div>
@@ -1062,7 +1097,7 @@ async function saveEvent(overlay, mode, eventId, existingReminder = null) {
       }
     }
 
-    closeModal();
+    closeModal({ force: true });
     renderView();
     window.oikos?.showToast(mode === 'create' ? t('calendar.createdToast') : t('calendar.savedToast'), 'success');
   } catch (err) {
@@ -1073,15 +1108,32 @@ async function saveEvent(overlay, mode, eventId, existingReminder = null) {
 }
 
 async function deleteEvent(id) {
-  try {
-    await api.delete(`/calendar/${id}`);
-    api.delete(`/reminders?entity_type=event&entity_id=${id}`).catch(() => {});
-    refreshReminders();
-    state.events = state.events.filter((e) => e.id !== id);
-    renderView();
-    window.oikos?.showToast(t('calendar.deletedToast'), 'success');
-  } catch (err) {
-    window.oikos?.showToast(err.data?.error ?? t('calendar.deleteError'), 'error');
-  }
+  const event = state.events.find((e) => e.id === id);
+  state.events = state.events.filter((e) => e.id !== id);
+  renderView();
+
+  let undone = false;
+  window.oikos?.showToast(t('calendar.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (event) {
+      state.events = [...state.events, event];
+      renderView();
+    }
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/calendar/${id}`);
+      api.delete(`/reminders?entity_type=event&entity_id=${id}`).catch(() => {});
+      refreshReminders();
+    } catch (err) {
+      if (event) {
+        state.events = [...state.events, event];
+        renderView();
+      }
+      window.oikos?.showToast(err.data?.error ?? t('calendar.deleteError'), 'danger');
+    }
+  }, 5000);
 }
 

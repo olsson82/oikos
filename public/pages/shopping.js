@@ -8,7 +8,7 @@ import { api } from '/api.js';
 import { stagger, vibrate } from '/utils/ux.js';
 import { t } from '/i18n.js';
 import { esc } from '/utils/html.js';
-import { promptModal, confirmModal } from '/components/modal.js';
+import { promptModal } from '/components/modal.js';
 import { DEFAULT_CATEGORY_NAME, categoryLabel } from '/utils/shopping-categories.js';
 
 // --------------------------------------------------------
@@ -781,23 +781,34 @@ function wireListContentEvents(container) {
 
     // ---- Liste löschen ----
     if (action === 'delete-list') {
-      if (!await confirmModal(t('shopping.deleteListConfirm', { name: state.activeList?.name }), { danger: true, confirmLabel: t('common.delete') })) return;
-      try {
-        await api.delete(`/shopping/${state.activeListId}`);
-        state.lists = state.lists.filter((l) => l.id !== state.activeListId);
-        state.activeListId = state.lists[0]?.id ?? null;
-        if (state.activeListId) {
-          await switchList(state.activeListId, container);
-        } else {
-          state.items      = [];
-          state.activeList = null;
+      const deletedListId = state.activeListId;
+
+      let undone = false;
+      window.oikos.showToast(t('shopping.deletedListToast'), 'default', 5000, () => {
+        undone = true;
+        // Liste wurde nie optimistisch ausgeblendet → kein visuelles Restore nötig
+      });
+
+      setTimeout(async () => {
+        if (undone) return;
+        try {
+          await api.delete(`/shopping/${deletedListId}`);
+          await loadLists();
+          state.activeListId = state.lists[0]?.id ?? null;
+          if (state.activeListId) {
+            await switchList(state.activeListId, container);
+          } else {
+            state.items      = [];
+            state.activeList = null;
+            renderTabs(container);
+            renderListContent(container);
+          }
+        } catch (err) {
+          window.oikos.showToast(err.message ?? t('common.unknownError'), 'danger');
+          await loadLists();
           renderTabs(container);
-          renderListContent(container);
         }
-        window.oikos.showToast(t('shopping.deletedListToast'));
-      } catch (err) {
-        window.oikos.showToast(err.message, 'danger');
-      }
+      }, 5000);
     }
   });
 

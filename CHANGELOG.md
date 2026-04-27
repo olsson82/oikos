@@ -7,6 +7,97 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.5] - 2026-04-27
+
+### Changed
+- Birthdays: increased maximum photo upload size from ~0.9 MB to 5 MB
+
+## [0.26.4] - 2026-04-27
+
+### Changed
+- Dashboard: weather widget is now the first entry in the default widget order
+- Dashboard: widgets in the same grid row now share the same height (via flex stretch), eliminating the patchwork gaps between shorter and taller widgets
+
+## [0.26.3] - 2026-04-27
+
+### Fixed
+- Birthdays: "Discard changes?" dialog appeared immediately after successfully saving a birthday because `closeModal()` was called without `force: true`, triggering the dirty-form check on a programmatic close
+- Dashboard (PWA): widget items (tasks, events, meals, notes, birthdays, shopping lists) occasionally blocked vertical swipe-to-scroll; added `touch-action: pan-y` so the browser passes vertical pan gestures through to the scroll container
+
+## [0.26.2] - 2026-04-27
+
+### Fixed
+- Dashboard: KPI summary bar removed — it duplicated the same widget categories (tasks, calendar, birthdays…) that are already visible as full widgets directly below
+- Dashboard: replaced the two-column main/side workspace layout with the established flat responsive grid so all widgets are consistently left-aligned across all screen sizes in the web view
+
+## [0.26.1] - 2026-04-27
+
+### Fixed
+- Dashboard: `path is not defined` crash on every navigation — `renderPage()` referenced a bare `path` variable instead of `route.path`
+- Dashboard: shopping lists widget caused a server-side SQL error (`HAVING` clause on non-aggregate query) resulting in an empty widget for all users
+
+## [0.26.0] - 2026-04-27
+
+### Added
+- Birthdays module: track family birthdays with name, birth date, optional photo and notes; each entry is automatically synced to the calendar as a yearly recurring event and to the reminder system
+- Birthdays dashboard widget: shows the next upcoming birthdays at a glance with age and days-until labels
+- Family Participants dashboard widget: displays the number of users added to the family with avatar initials
+- Budget Overview dashboard widget: shows monthly income, expenses, balance, savings rate and top expense category
+- Dashboard widget customisation extended to include the three new widgets (birthdays, budget, family)
+- Settings › General: admin option to set a custom application name shown in the sidebar, browser title and login screen
+- Birthday translations across all 16 supported locales
+
+### Changed
+- Service worker: mutable JS and CSS assets now use network-first caching to eliminate stale-asset issues after deployments
+
+## [0.25.8] - 2026-04-27
+
+### Fixed
+- Test suite: `makeInput` mock in `test-modal-utils.js` now implements `setAttribute`/`removeAttribute` so blur-validation tests correctly verify the new `aria-invalid` attribute behaviour
+
+## [0.25.7] - 2026-04-27
+
+### Added
+- Navigation: a dedicated screen-reader announcer (`aria-live="polite"`) announces the page name on every route change instead of reading the entire page content
+
+### Changed
+- Color pickers (notes, calendar): swatches now use `role="radiogroup"` with localized color names instead of hex codes, `aria-checked` reflects the selected state, and Arrow keys navigate between options
+- Navigation badges: badge counts are now hidden from screen readers (`aria-hidden`); the parent nav link's `aria-label` is updated to include the count in plain text (e.g. "Aufgaben, 3 überfällig")
+- Main content area: removed `aria-live="polite"` from `<main>` — it was causing screen readers to read the full page on every navigation
+
+### Fixed
+- Form validation: `aria-invalid="true"` is now set on invalid inputs in all modals and on the login form so screen readers can announce field errors
+
+## [0.25.6] - 2026-04-27
+
+### Changed
+- Tasks: completing a task now animates the strikethrough line instead of snapping it on instantly
+- Modal: save button shows a spinner during async API calls; the spinner disappears immediately if form validation fails, and on API error when the button is re-enabled
+- Toast: the Undo button now gives tactile press feedback (scale + removes browser tap highlight) for reliable interaction within the 5-second window
+
+## [0.25.5] - 2026-04-26
+
+### Added
+- Navigation: the "More" button now shows the name and icon of the active secondary module instead of the generic label, making it clear which module is open
+- Dashboard: first-time onboarding overlay guides new users through the app's three core navigation areas
+
+### Changed
+- Navigation: renamed "Pinnwand" to "Notizen" for clarity
+- Login: submit button shows a spinner during authentication; empty fields are highlighted individually with red borders instead of a single generic error message
+
+### Fixed
+- Modal: closing a modal when the form has unsaved changes no longer double-fires the guard due to a missing `_isClosing` flag; the close button now uses an arrow-function listener to avoid stale closure issues
+
+## [0.25.4] - 2026-04-26
+
+### Added
+- Modal: closing a modal (via Escape, swipe, overlay click, or X button) now shows a "Discard changes?" confirmation dialog when the form has been modified since it was opened; saving or deleting bypasses the prompt
+
+## [0.25.3] - 2026-04-26
+
+### Changed
+- Delete actions in all seven modules (tasks, notes, budget, calendar, contacts, meals, recipes) and shopping list deletion no longer show a confirmation dialog; instead the item is removed immediately and a toast with an Undo button gives a 5-second window to reverse the action before the API call is made
+
 ## [0.25.2] - 2026-04-26
 
 ### Changed

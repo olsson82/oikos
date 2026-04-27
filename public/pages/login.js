@@ -68,7 +68,7 @@ export async function render(container) {
           <div class="login-error" id="login-error" role="alert" aria-live="polite" hidden></div>
 
           <button type="submit" class="btn btn--primary login-form__submit" id="login-btn">
-            ${t('login.loginButton')}
+            <span class="login-btn__label">${t('login.loginButton')}</span>
           </button>
         </form>
       </div>
@@ -101,13 +101,30 @@ export async function render(container) {
     const username = form.username.value.trim();
     const password = form.password.value;
 
+    const usernameInput = form.querySelector('#username');
+    const passwordInput = form.querySelector('#password');
+    const usernameGroup = usernameInput.closest('.form-group');
+    const passwordGroup = passwordInput.closest('.form-group');
+
+    usernameGroup.classList.toggle('form-group--error', !username);
+    passwordGroup.classList.toggle('form-group--error', !password);
+    usernameInput.setAttribute('aria-invalid', String(!username));
+    passwordInput.setAttribute('aria-invalid', String(!password));
+
     if (!username || !password) {
-      showError(errorEl, t('common.allFieldsRequired'));
+      if (!username) usernameInput.focus();
+      else passwordInput.focus();
       return;
     }
 
+    const labelEl = submitBtn.querySelector('.login-btn__label');
+
     submitBtn.disabled = true;
-    submitBtn.textContent = t('login.loggingIn');
+    labelEl.textContent = t('login.loggingIn');
+    const spinner = document.createElement('span');
+    spinner.className = 'login-spinner';
+    spinner.setAttribute('aria-hidden', 'true');
+    submitBtn.insertBefore(spinner, labelEl);
 
     try {
       const result = await auth.login(username, password);
@@ -119,8 +136,18 @@ export async function render(container) {
       );
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = t('login.loginButton');
+      labelEl.textContent = t('login.loginButton');
+      spinner.remove();
     }
+  });
+
+  form.querySelector('#username').addEventListener('input', (e) => {
+    e.currentTarget.closest('.form-group').classList.remove('form-group--error');
+    e.currentTarget.removeAttribute('aria-invalid');
+  });
+  form.querySelector('#password').addEventListener('input', (e) => {
+    e.currentTarget.closest('.form-group').classList.remove('form-group--error');
+    e.currentTarget.removeAttribute('aria-invalid');
   });
 }
 

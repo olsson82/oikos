@@ -6,7 +6,7 @@
 
 import { api } from '/api.js';
 import { renderRRuleFields, bindRRuleEvents, getRRuleValues } from '/rrule-ui.js';
-import { openModal as openSharedModal, closeModal, wireBlurValidation, validateAll, btnSuccess, btnError, promptModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal, wireBlurValidation, validateAll, btnSuccess, btnError, promptModal } from '/components/modal.js';
 import { stagger, vibrate } from '/utils/ux.js';
 import { t, formatDate, formatTime } from '/i18n.js';
 import { esc } from '/utils/html.js';
@@ -570,7 +570,7 @@ async function handleFormSubmit(e, container) {
     }
 
     btnSuccess(submitBtn, originalLabel);
-    setTimeout(() => closeModal(), 700);
+    setTimeout(() => closeModal({ force: true }), 700);
     await loadTasks(container);
   } catch (err) {
     errorEl.textContent = err.message;
@@ -582,18 +582,29 @@ async function handleFormSubmit(e, container) {
 }
 
 async function handleDeleteTask(id, container) {
-  if (!await confirmModal(t('tasks.deleteConfirm'), { danger: true, confirmLabel: t('common.delete') })) return;
-  try {
-    await api.delete(`/tasks/${id}`);
-    // Erinnerungen für diese Aufgabe ebenfalls entfernen
-    api.delete(`/reminders?entity_type=task&entity_id=${id}`).catch(() => {});
-    refreshReminders();
-    closeModal();
-    window.oikos.showToast(t('tasks.deletedToast'), 'default');
-    await loadTasks(container);
-  } catch (err) {
-    window.oikos.showToast(err.message, 'danger');
-  }
+  closeModal({ force: true });
+  const itemEl = container.querySelector(`[data-task-id="${id}"]`);
+  if (itemEl) itemEl.style.display = 'none';
+
+  let undone = false;
+  window.oikos.showToast(t('tasks.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (itemEl) itemEl.style.display = '';
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/tasks/${id}`);
+      // Erinnerungen für diese Aufgabe ebenfalls entfernen
+      api.delete(`/reminders?entity_type=task&entity_id=${id}`).catch(() => {});
+      refreshReminders();
+      await loadTasks(container);
+    } catch (err) {
+      if (itemEl) itemEl.style.display = '';
+      window.oikos.showToast(err.message ?? t('common.unknownError'), 'danger');
+    }
+  }, 5000);
 }
 
 async function handleAddSubtask(parentId, container) {
@@ -1081,6 +1092,13 @@ function updateOverdueBadge() {
   }).length;
 
   document.querySelectorAll('[data-route="/tasks"] .nav-badge').forEach((el) => el.remove());
+  document.querySelectorAll('[data-route="/tasks"]').forEach((navItem) => {
+    const baseLabel = t('tasks.title');
+    navItem.setAttribute('aria-label', overdue > 0
+      ? t('tasks.navLabelOverdue', { count: overdue })
+      : baseLabel
+    );
+  });
   if (overdue > 0) {
     document.querySelectorAll('[data-route="/tasks"]').forEach((navItem) => {
       let anchor = navItem.querySelector('.nav-item__icon-wrap');
@@ -1097,6 +1115,7 @@ function updateOverdueBadge() {
       }
       const badge = document.createElement('span');
       badge.className = 'nav-badge';
+      badge.setAttribute('aria-hidden', 'true');
       badge.textContent = String(overdue);
       anchor.appendChild(badge);
     });

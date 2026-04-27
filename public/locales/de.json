@@ -36,7 +36,7 @@
     "calendar": "Kalender",
     "meals": "Essen",
     "shopping": "Einkauf",
-    "notes": "Pinnwand",
+    "notes": "Notizen",
     "contacts": "Kontakte",
     "birthdays": "Geburtstage",
     "budget": "Budget",
@@ -184,7 +184,8 @@
     "filterGroupStatus": "Status",
     "filterGroupPriority": "Priorität",
     "filterGroupPerson": "Person",
-    "filterClearAll": "Alle Filter zurücksetzen"
+    "filterClearAll": "Alle Filter zurücksetzen",
+    "navLabelOverdue": "Aufgaben, {{count}} überfällig"
   },
   "shopping": {
     "title": "Einkauf",
@@ -278,7 +279,8 @@
     "savedRecipeLabel": "Gespeichertes Rezept",
     "savedRecipePlaceholder": "Rezept auswählen",
     "saveAsRecipe": "Als Rezept speichern",
-    "recipeScaleLabel": "Zutaten skalieren"
+    "recipeScaleLabel": "Zutaten skalieren",
+    "deletedToast": "Mahlzeit gelöscht"
   },
   "calendar": {
     "title": "Kalender",
@@ -312,7 +314,17 @@
     "locationPlaceholder": "Optional",
     "assignedLabel": "Zugewiesen an",
     "assignedNobody": "- Niemand -",
-    "colorLabel": "Farbe {{color}}",
+    "colorLabel": "Farbe",
+    "colorBlue": "Blau",
+    "colorGreen": "Grün",
+    "colorOrange": "Orange",
+    "colorRed": "Rot",
+    "colorPurple": "Lila",
+    "colorCoral": "Korall",
+    "colorSkyBlue": "Hellblau",
+    "colorYellow": "Gelb",
+    "colorGray": "Grau",
+    "colorCyan": "Cyan",
     "descriptionLabel": "Beschreibung",
     "descriptionPlaceholder": "Optional…",
     "popupEdit": "Bearbeiten",
@@ -357,7 +369,7 @@
     }
   },
   "notes": {
-    "title": "Pinnwand",
+    "title": "Notizen",
     "newNote": "Neue Notiz",
     "editNote": "Notiz bearbeiten",
     "addNoteLabel": "Neue Notiz",
@@ -392,7 +404,15 @@
     "formatLink": "Link",
     "formatCode": "Code",
     "formatQuote": "Zitat",
-    "formatDivider": "Trennlinie"
+    "formatDivider": "Trennlinie",
+    "colorYellow": "Gelb",
+    "colorAmber": "Hellgelb",
+    "colorGreen": "Grün",
+    "colorTeal": "Türkis",
+    "colorBlue": "Blau",
+    "colorPurple": "Lila",
+    "colorOrange": "Orange",
+    "colorWhite": "Weiß"
   },
   "contacts": {
     "title": "Kontakte",
@@ -757,7 +777,9 @@
   },
   "modal": {
     "closeLabel": "Schließen",
-    "overlayLabel": "Modaler Dialog-Hintergrund"
+    "overlayLabel": "Modaler Dialog-Hintergrund",
+    "unsavedChanges": "Änderungen verwerfen?",
+    "discardChanges": "Verwerfen"
   },
   "rrule": {
     "freqNone": "Keine Wiederholung",
@@ -855,5 +877,16 @@
     "duplicate": "Duplizieren",
     "duplicated": "Rezept dupliziert.",
     "copySuffix": "Kopie"
+  },
+  "onboarding": {
+    "step1Title": "Willkommen bei Oikos",
+    "step1Body": "Dein persönlicher Familienplaner. Aufgaben, Kalender, Einkauf und mehr – alles an einem Ort.",
+    "step2Title": "Alles im Blick",
+    "step2Body": "Über die Navigation unten erreichst du alle Module. Mit dem +-Button erstellst du schnell neue Einträge.",
+    "step3Title": "Bereit loszulegen",
+    "step3Body": "Das Dashboard zeigt dir die wichtigsten Infos auf einen Blick. Du kannst es unter \"Anpassen\" nach deinen Wünschen einrichten.",
+    "next": "Weiter",
+    "done": "Loslegen",
+    "skip": "Überspringen"
   }
 }

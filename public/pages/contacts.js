@@ -5,7 +5,7 @@
  */
 
 import { api } from '/api.js';
-import { openModal as openSharedModal, closeModal, confirmModal } from '/components/modal.js';
+import { openModal as openSharedModal, closeModal } from '/components/modal.js';
 import { stagger, vibrate } from '/utils/ux.js';
 import { t } from '/i18n.js';
 import { esc } from '/utils/html.js';
@@ -304,7 +304,7 @@ function openContactModal({ mode, contact = null }) {
       panel.querySelector('#cm-cancel').addEventListener('click', closeModal);
 
       panel.querySelector('#cm-delete')?.addEventListener('click', async () => {
-        closeModal();
+        closeModal({ force: true });
         await deleteContact(contact.id);
       });
 
@@ -336,7 +336,7 @@ function openContactModal({ mode, contact = null }) {
             const idx = state.contacts.findIndex((c) => c.id === contact.id);
             if (idx !== -1) state.contacts[idx] = res.data;
           }
-          closeModal();
+          closeModal({ force: true });
           renderList();
           window.oikos?.showToast(mode === 'create' ? t('contacts.savedToast') : t('contacts.updatedToast'), 'success');
         } catch (err) {
@@ -350,16 +350,32 @@ function openContactModal({ mode, contact = null }) {
 }
 
 async function deleteContact(id) {
-  if (!await confirmModal(t('contacts.deleteConfirm'), { danger: true, confirmLabel: t('common.delete') })) return;
-  try {
-    await api.delete(`/contacts/${id}`);
-    state.contacts = state.contacts.filter((c) => c.id !== id);
-    renderList();
-    vibrate([30, 50, 30]);
-    window.oikos?.showToast(t('contacts.deletedToast'), 'success');
-  } catch (err) {
-    window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'error');
-  }
+  const contact = state.contacts.find((c) => c.id === id);
+  state.contacts = state.contacts.filter((c) => c.id !== id);
+  renderList();
+  vibrate([30, 50, 30]);
+
+  let undone = false;
+  window.oikos?.showToast(t('contacts.deletedToast'), 'default', 5000, () => {
+    undone = true;
+    if (contact) {
+      state.contacts = [...state.contacts, contact].sort((a, b) => a.name.localeCompare(b.name));
+      renderList();
+    }
+  });
+
+  setTimeout(async () => {
+    if (undone) return;
+    try {
+      await api.delete(`/contacts/${id}`);
+    } catch (err) {
+      if (contact) {
+        state.contacts = [...state.contacts, contact].sort((a, b) => a.name.localeCompare(b.name));
+        renderList();
+      }
+      window.oikos?.showToast(err.data?.error ?? t('common.unknownError'), 'danger');
+    }
+  }, 5000);
 }
 
 

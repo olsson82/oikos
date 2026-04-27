@@ -16,6 +16,8 @@ import { t } from '/i18n.js';
 let activeOverlay = null;
 let previouslyFocused = null;
 let focusTrapHandler = null;
+let _initialFormSnapshot = null;
+let _isClosing = false;
 
 // Overlay-Dimming: theme-color abdunkeln im Standalone-Modus
 const OVERLAY_THEME_COLOR = '#1A1A1A';
@@ -96,6 +98,20 @@ function trapFocus(container) {
   if (first) {
     setTimeout(() => first.focus(), 50);
   }
+}
+
+// --------------------------------------------------------
+// Dirty-Check Helpers
+// --------------------------------------------------------
+
+function serializeForm(container) {
+  const inputs = container.querySelectorAll('input, select, textarea');
+  return Array.from(inputs).map((el) => `${el.name || el.id}=${el.value}`).join('&');
+}
+
+function isFormDirty(container) {
+  if (!_initialFormSnapshot) return false;
+  return serializeForm(container) !== _initialFormSnapshot;
 }
 
 // --------------------------------------------------------
@@ -204,9 +220,10 @@ export function openModal({ title, content, onSave, onDelete, size = 'md' } = {}
   // ID sofort entfernen damit getElementById() nach dem Einfügen des neuen Modals
   // nicht die noch animierende alte Instanz zurückgibt – sonst landen alle
   // Event-Listener am falschen Element und Buttons reagieren nicht.
+  // force=true: kein Dirty-Check beim programmatischen Ersetzen (z.B. confirmModal öffnet sich).
   if (activeOverlay) {
     activeOverlay.removeAttribute('id');
-    closeModal();
+    closeModal({ force: true });
   }
 
   // Focus-Restore vorbereiten
@@ -243,6 +260,14 @@ export function openModal({ title, content, onSave, onDelete, size = 'md' } = {}
   const panel = activeOverlay.querySelector('.modal-panel');
   trapFocus(panel);
 
+  // Snapshot für Dirty-Check (kurzer Delay: Felder könnten noch per JS befüllt werden)
+  _initialFormSnapshot = null;
+  setTimeout(() => {
+    if (activeOverlay) {
+      _initialFormSnapshot = serializeForm(activeOverlay.querySelector('.modal-panel') ?? activeOverlay);
+    }
+  }, 150);
+
   // Swipe-to-Close auf Mobile
   if (window.innerWidth < 768) {
     _wireSheetSwipe(panel);
@@ -261,13 +286,29 @@ export function openModal({ title, content, onSave, onDelete, size = 'md' } = {}
 
   // Close-Button
   activeOverlay.querySelector('[data-action="close-modal"]')
-    ?.addEventListener('click', closeModal);
+    ?.addEventListener('click', () => closeModal());
 
   // Escape
   document.addEventListener('keydown', onEscape);
 
   // Callback für Aufrufer (Form-Events binden etc.)
   if (typeof onSave === 'function') onSave(panel);
+
+  // Loading-State: btn--loading auf Submit-Button während async-Save.
+  // rAF-Check: Validierung schlägt fehl → btn bleibt enabled → Loading sofort entfernen.
+  // MutationObserver: Error-Pfad → btn wird re-enabled → Loading entfernen.
+  panel.addEventListener('submit', (e) => {
+    const btn = e.target.querySelector('[type="submit"], .btn--primary');
+    if (!btn || btn.disabled) return;
+    btn.classList.add('btn--loading');
+    requestAnimationFrame(() => {
+      if (!btn.disabled) { btn.classList.remove('btn--loading'); return; }
+      const mo = new MutationObserver(() => {
+        if (!btn.disabled) { btn.classList.remove('btn--loading'); mo.disconnect(); }
+      });
+      mo.observe(btn, { attributes: true, attributeFilter: ['disabled'] });
+    });
+  }, { capture: true });
 
   // Standalone: Statusbar abdunkeln (Overlay-Effekt)
   if (window.oikos?.setThemeColor) {
@@ -279,8 +320,28 @@ export function openModal({ title, content, onSave, onDelete, size = 'md' } = {}
 // closeModal
 // --------------------------------------------------------
 
-export function closeModal() {
-  if (!activeOverlay) return;
+export async function closeModal({ force = false } = {}) {
+  if (!activeOverlay || _isClosing) return;
+  _isClosing = true;
+
+  if (!force) {
+    const panel = activeOverlay.querySelector('.modal-panel');
+    if (panel && isFormDirty(panel)) {
+      let confirmed;
+      try {
+        confirmed = await confirmModal(t('modal.unsavedChanges'), {
+          danger: false,
+          confirmLabel: t('modal.discardChanges'),
+        });
+      } catch (err) {
+        _isClosing = false;
+        throw err;
+      }
+      if (!confirmed) { _isClosing = false; return; }
+    }
+  }
+
+  _initialFormSnapshot = null;
 
   document.removeEventListener('keydown', onEscape);
 
@@ -304,14 +365,16 @@ export function closeModal() {
   if (isMobile && panel) {
     panel.classList.add('modal-panel--closing');
     // Fallback-Timer falls animationend nicht feuert (prefers-reduced-motion, Tab-Wechsel etc.)
-    const fallback = setTimeout(() => _doClose(capturedOverlay), 300);
+    const fallback = setTimeout(() => { _isClosing = false; _doClose(capturedOverlay); }, 300);
     panel.addEventListener('animationend', () => {
       clearTimeout(fallback);
+      _isClosing = false;
       _doClose(capturedOverlay);
     }, { once: true });
     return;
   }
 
+  _isClosing = false;
   _doClose(capturedOverlay);
 }
 
@@ -528,6 +591,7 @@ function _validateField(input) {
   const hasValue = input.value.trim().length > 0;
   group?.classList.toggle('form-field--error', !hasValue);
   group?.classList.toggle('form-field--valid', hasValue);
+  input.setAttribute('aria-invalid', String(!hasValue));
   return hasValue;
 }
 
@@ -573,6 +637,7 @@ export function validateAll(formContainer) {
  * @param {string} [originalLabel]
  */
 export function btnSuccess(btn, originalLabel) {
+  btn.classList.remove('btn--loading');
   const label = originalLabel ?? btn.textContent;
   btn.classList.add('btn--success');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
