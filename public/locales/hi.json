@@ -44,7 +44,7 @@
     "main": "मुख्य नेविगेशन",
     "navigation": "नेविगेशन",
     "quickActions": "त्वरित क्रियाएं",
-    "recipes": "Recipes",
+    "recipes": "रेसिपी",
     "more": "और"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "माह"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "रेसिपी",
+    "addRecipe": "रेसिपी जोड़ें",
+    "editRecipe": "रेसिपी संपादित करें",
+    "emptyTitle": "अभी तक कोई रेसिपी नहीं",
+    "emptyDescription": "अपनी पसंदीदा रेसिपी सहेजें और उन्हें भोजन योजना में दोबारा उपयोग करें।",
+    "titleLabel": "शीर्षक *",
+    "titlePlaceholder": "जैसे। पास्ता कार्बोनारा",
+    "notesLabel": "नोट्स",
+    "notesPlaceholder": "वैकल्पिक...",
+    "urlLabel": "रेसिपी लिंक",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "सामग्री",
+    "addToMeals": "भोजन योजना में जोड़ें",
+    "openLink": "रेसिपी लिंक खोलें",
+    "deleteConfirm": "रेसिपी \"{{title}}\" हटाएं?",
+    "created": "रेसिपी सहेजी गई।",
+    "updated": "रेसिपी अपडेट की गई।",
+    "deleted": "रेसिपी हटाई गई।",
+    "titleRequired": "शीर्षक आवश्यक है",
+    "duplicate": "डुप्लिकेट",
+    "duplicated": "रेसिपी डुप्लिकेट की गई।",
+    "copySuffix": "कॉपी"
   },
   "search": {
     "title": "खोज",
@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "रेसिपी बनाएं और उन्हें अपने भोजन योजनाकार से जोड़ें।"
   }
 }

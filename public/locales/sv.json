@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "Skapa recept och koppla dem till din måltidsplanering."
   }
 }

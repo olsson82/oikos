@@ -44,7 +44,7 @@
     "main": "القائمة الرئيسية",
     "navigation": "التنقل",
     "quickActions": "الإجراءات السريعة",
-    "recipes": "Recipes",
+    "recipes": "الوصفات",
     "more": "المزيد"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "أشهر"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "الوصفات",
+    "addRecipe": "إضافة وصفة",
+    "editRecipe": "تعديل الوصفة",
+    "emptyTitle": "لا توجد وصفات حتى الآن",
+    "emptyDescription": "احفظ وصفاتك المفضلة وأعد استخدامها في التخطيط للوجبات.",
+    "titleLabel": "العنوان *",
+    "titlePlaceholder": "مثال: معكرونة كربونارا",
+    "notesLabel": "ملاحظات",
+    "notesPlaceholder": "اختياري...",
+    "urlLabel": "رابط الوصفة",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "المكونات",
+    "addToMeals": "إضافة إلى خطة الوجبات",
+    "openLink": "فتح رابط الوصفة",
+    "deleteConfirm": "حذف الوصفة \"{{title}}\"؟",
+    "created": "تم حفظ الوصفة.",
+    "updated": "تم تحديث الوصفة.",
+    "deleted": "تم حذف الوصفة.",
+    "titleRequired": "العنوان مطلوب",
+    "duplicate": "نسخ",
+    "duplicated": "تم نسخ الوصفة.",
+    "copySuffix": "نسخة"
   },
   "search": {
     "title": "بحث",
@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "أنشئ وصفات واربطها بمخطط الوجبات."
   }
 }

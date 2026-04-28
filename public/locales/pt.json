@@ -44,7 +44,7 @@
     "main": "Navegação principal",
     "navigation": "Navegação",
     "quickActions": "Ações rápidas",
-    "recipes": "Recipes",
+    "recipes": "Receitas",
     "more": "Mais"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "meses"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "Receitas",
+    "addRecipe": "Adicionar receita",
+    "editRecipe": "Editar receita",
+    "emptyTitle": "Nenhuma receita ainda",
+    "emptyDescription": "Salve suas receitas favoritas e reutilize-as no planejamento de refeições.",
+    "titleLabel": "Título *",
+    "titlePlaceholder": "ex. Massa à Carbonara",
+    "notesLabel": "Notas",
+    "notesPlaceholder": "Opcional...",
+    "urlLabel": "Link da receita",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "Ingredientes",
+    "addToMeals": "Adicionar ao plano de refeições",
+    "openLink": "Abrir link da receita",
+    "deleteConfirm": "Excluir receita \"{{title}}\"?",
+    "created": "Receita salva.",
+    "updated": "Receita atualizada.",
+    "deleted": "Receita excluída.",
+    "titleRequired": "O título é obrigatório",
+    "duplicate": "Duplicar",
+    "duplicated": "Receita duplicada.",
+    "copySuffix": "cópia"
   },
   "search": {
     "title": "Pesquisa",
@@ -884,5 +884,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "Crie receitas e vincule-as ao seu planejador de refeições."
   }
 }

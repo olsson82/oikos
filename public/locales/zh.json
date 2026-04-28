@@ -44,7 +44,7 @@
     "main": "主导航",
     "navigation": "导航",
     "quickActions": "快捷操作",
-    "recipes": "Recipes",
+    "recipes": "食谱",
     "more": "更多"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "个月"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "食谱",
+    "addRecipe": "添加食谱",
+    "editRecipe": "编辑食谱",
+    "emptyTitle": "还没有食谱",
+    "emptyDescription": "保存你喜爱的食谱，在餐食规划中重复使用。",
+    "titleLabel": "标题 *",
+    "titlePlaceholder": "例如：意大利面卡邦尼",
+    "notesLabel": "备注",
+    "notesPlaceholder": "可选...",
+    "urlLabel": "食谱链接",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "材料",
+    "addToMeals": "添加到餐食计划",
+    "openLink": "打开食谱链接",
+    "deleteConfirm": "删除食谱\"{{title}}\"？",
+    "created": "食谱已保存。",
+    "updated": "食谱已更新。",
+    "deleted": "食谱已删除。",
+    "titleRequired": "标题必填",
+    "duplicate": "复制",
+    "duplicated": "食谱已复制。",
+    "copySuffix": "副本"
   },
   "search": {
     "title": "搜索",
@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "创建食谱并将其关联到你的膳食计划。"
   }
 }

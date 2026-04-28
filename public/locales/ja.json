@@ -44,7 +44,7 @@
     "main": "メインナビゲーション",
     "navigation": "ナビゲーション",
     "quickActions": "クイックアクション",
-    "recipes": "Recipes",
+    "recipes": "レシピ",
     "more": "もっと見る"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "ヶ月"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "レシピ",
+    "addRecipe": "レシピを追加",
+    "editRecipe": "レシピを編集",
+    "emptyTitle": "まだレシピがありません",
+    "emptyDescription": "お気に入りのレシピを保存して、食事計画で再利用できます。",
+    "titleLabel": "タイトル *",
+    "titlePlaceholder": "例：パスタカルボナーラ",
+    "notesLabel": "メモ",
+    "notesPlaceholder": "オプション...",
+    "urlLabel": "レシピリンク",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "材料",
+    "addToMeals": "食事計画に追加",
+    "openLink": "レシピリンクを開く",
+    "deleteConfirm": "レシピ \"{{title}}\" を削除しますか？",
+    "created": "レシピが保存されました。",
+    "updated": "レシピが更新されました。",
+    "deleted": "レシピが削除されました。",
+    "titleRequired": "タイトルが必要です",
+    "duplicate": "複製",
+    "duplicated": "レシピが複製されました。",
+    "copySuffix": "コピー"
   },
   "search": {
     "title": "検索",
@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "レシピを作成して、食事プランに関連付けましょう。"
   }
 }

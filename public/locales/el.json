@@ -44,7 +44,7 @@
     "main": "Κύρια πλοήγηση",
     "navigation": "Πλοήγηση",
     "quickActions": "Γρήγορες ενέργειες",
-    "recipes": "Recipes",
+    "recipes": "Συνταγές",
     "more": "Περισσότερα"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "μήνες"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "Συνταγές",
+    "addRecipe": "Προσθήκη συνταγής",
+    "editRecipe": "Επεξεργασία συνταγής",
+    "emptyTitle": "Δεν υπάρχουν ακόμη συνταγές",
+    "emptyDescription": "Αποθηκεύστε τις αγαπημένες σας συνταγές και χρησιμοποιήστε τις ξανά στον σχεδιασμό γευμάτων.",
+    "titleLabel": "Τίτλος *",
+    "titlePlaceholder": "π.χ. Μακαρόνια Ανθρωπογαίας",
+    "notesLabel": "Σημειώσεις",
+    "notesPlaceholder": "Προαιρετικό...",
+    "urlLabel": "Σύνδεσμος συνταγής",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "Συστατικά",
+    "addToMeals": "Προσθήκη στο σχέδιο γευμάτων",
+    "openLink": "Άνοιγμα συνδέσμου συνταγής",
+    "deleteConfirm": "Διδαγραφή συνταγής \"{{title}}\";",
+    "created": "Η συνταγή αποθηκεύτηκε.",
+    "updated": "Η συνταγή ενημερώθηκε.",
+    "deleted": "Η συνταγή διαγράφηκε.",
+    "titleRequired": "Ο τίτλος είναι υποχρεωτικός",
+    "duplicate": "Διπλότυπο",
+    "duplicated": "Η συνταγή αντιγράφηκε.",
+    "copySuffix": "αντίγραφο"
   },
   "search": {
     "title": "Αναζήτηση",
@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "Δημιουργήστε συνταγές και συνδέστε τις με τον προγραμματισμό γευμάτων."
   }
 }
