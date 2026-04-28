@@ -6,7 +6,7 @@
 
 import { api, auth } from '/api.js';
 import { openModal, closeModal, confirmModal } from '/components/modal.js';
-import { t, formatDate, formatTime } from '/i18n.js';
+import { t, formatDate, formatTime, dateInputPlaceholder, formatDateInput, parseDateInput, isDateInputValid } from '/i18n.js';
 import { esc } from '/utils/html.js';
 import '/components/oikos-locale-picker.js';
 
@@ -54,6 +54,15 @@ function buildFamilyRoleOptions(selected = 'other') {
   return FAMILY_ROLES.map((role) => `
     <option value="${role}"${role === selected ? ' selected' : ''}>${familyRoleLabel(role)}</option>
   `).join('');
+}
+
+function bindSettingsDateInputs(root) {
+  root.querySelectorAll('.js-date-input').forEach((input) => {
+    input.addEventListener('blur', () => {
+      const parsed = parseDateInput(input.value);
+      if (parsed) input.value = formatDateInput(parsed);
+    });
+  });
 }
 
 function avatarHtml(user, className = 'settings-avatar') {
@@ -586,6 +595,21 @@ export async function render(container, { user }) {
                   ${buildFamilyRoleOptions()}
                 </select>
               </div>
+              <div class="modal-grid modal-grid--2">
+                <div class="form-group">
+                  <label class="form-label" for="new-member-phone">${t('settings.memberPhoneLabel')}</label>
+                  <input class="form-input" type="tel" id="new-member-phone" autocomplete="tel" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="new-member-email">${t('settings.memberEmailLabel')}</label>
+                  <input class="form-input" type="email" id="new-member-email" autocomplete="email" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="new-member-birth-date">${t('settings.memberBirthDateLabel')}</label>
+                <input class="form-input js-date-input" type="text" id="new-member-birth-date" placeholder="${dateInputPlaceholder()}" inputmode="numeric" />
+                <p class="form-hint">${t('settings.memberContactBirthdayHint')}</p>
+              </div>
               <label class="toggle-row">
                 <input type="checkbox" id="new-system-admin" />
                 <span>${t('settings.systemAdminLabel')}</span>
@@ -625,6 +649,7 @@ export async function render(container, { user }) {
 
 function bindEvents(container, user, users, categories, icsSubscriptions, apiTokens) {
   bindTabEvents(container);
+  bindSettingsDateInputs(container);
   bindCategoryEvents(container);
   bindIcsEvents(container, user, icsSubscriptions);
   bindApiTokenEvents(container, apiTokens);
@@ -934,6 +959,11 @@ function bindEvents(container, user, users, categories, icsSubscriptions, apiTok
       e.preventDefault();
       const errorEl = container.querySelector('#member-error');
       errorEl.hidden = true;
+      const birthDateRaw = container.querySelector('#new-member-birth-date')?.value || '';
+      if (!isDateInputValid(birthDateRaw)) {
+        showError(errorEl, t('settings.memberBirthDateInvalid'));
+        return;
+      }
 
       const data = {
         username:     container.querySelector('#new-username').value.trim(),
@@ -942,6 +972,9 @@ function bindEvents(container, user, users, categories, icsSubscriptions, apiTok
         avatar_color: container.querySelector('#new-avatar-color').value,
         family_role:  container.querySelector('#new-family-role').value,
         system_admin: container.querySelector('#new-system-admin')?.checked === true,
+        phone:        container.querySelector('#new-member-phone')?.value.trim() || null,
+        email:        container.querySelector('#new-member-email')?.value.trim() || null,
+        birth_date:   parseDateInput(birthDateRaw) || null,
       };
 
       const btn = addMemberForm.querySelector('[type=submit]');
@@ -1068,6 +1101,21 @@ function openEditMemberModal(member, currentUser, users, container) {
             ${buildFamilyRoleOptions(member.family_role)}
           </select>
         </div>
+        <div class="modal-grid modal-grid--2">
+          <div class="form-group">
+            <label class="form-label" for="edit-member-phone">${t('settings.memberPhoneLabel')}</label>
+            <input class="form-input" type="tel" id="edit-member-phone" value="${esc(member.phone || '')}" autocomplete="tel" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-member-email">${t('settings.memberEmailLabel')}</label>
+            <input class="form-input" type="email" id="edit-member-email" value="${esc(member.email || '')}" autocomplete="email" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-member-birth-date">${t('settings.memberBirthDateLabel')}</label>
+          <input class="form-input js-date-input" type="text" id="edit-member-birth-date" value="${esc(formatDateInput(member.birth_date))}" placeholder="${dateInputPlaceholder()}" inputmode="numeric" />
+          <p class="form-hint">${t('settings.memberContactBirthdayHint')}</p>
+        </div>
         <label class="toggle-row">
           <input type="checkbox" id="edit-member-system-admin" ${member.role === 'admin' ? 'checked' : ''} />
           <span>${t('settings.systemAdminLabel')}</span>
@@ -1083,6 +1131,7 @@ function openEditMemberModal(member, currentUser, users, container) {
     onSave(panel) {
       const fileInput = panel.querySelector('#edit-member-avatar-file');
       const errorEl = panel.querySelector('#edit-member-error');
+      bindSettingsDateInputs(panel);
       fileInput?.addEventListener('change', async () => {
         errorEl.hidden = true;
         try {
@@ -1116,6 +1165,12 @@ function openEditMemberModal(member, currentUser, users, container) {
         e.preventDefault();
         const submitBtn = panel.querySelector('[type=submit]');
         errorEl.hidden = true;
+        const birthDateRaw = panel.querySelector('#edit-member-birth-date')?.value || '';
+        if (!isDateInputValid(birthDateRaw)) {
+          showError(errorEl, t('settings.memberBirthDateInvalid'));
+          submitBtn.disabled = false;
+          return;
+        }
         submitBtn.disabled = true;
         try {
           const res = await auth.updateUser(member.id, {
@@ -1125,6 +1180,9 @@ function openEditMemberModal(member, currentUser, users, container) {
             avatar_data: state.avatarData,
             family_role: panel.querySelector('#edit-member-family-role').value,
             system_admin: panel.querySelector('#edit-member-system-admin').checked,
+            phone: panel.querySelector('#edit-member-phone')?.value.trim() || null,
+            email: panel.querySelector('#edit-member-email')?.value.trim() || null,
+            birth_date: parseDateInput(birthDateRaw) || null,
           });
           const idx = users.findIndex((u) => u.id === member.id);
           if (idx !== -1) users[idx] = res.user;
@@ -1389,12 +1447,18 @@ function bindCategoryEvents(container) {
 function memberHtml(u) {
   const familyRole = familyRoleLabel(u.family_role);
   const systemRole = u.role === 'admin' ? ` · ${esc(t('settings.systemAdminBadge'))}` : '';
+  const profileMeta = [
+    u.phone ? t('settings.memberPhoneMeta', { value: u.phone }) : '',
+    u.email || '',
+    u.birth_date ? t('settings.memberBirthdayMeta', { date: formatDate(u.birth_date) }) : '',
+  ].filter(Boolean).map(esc).join(' · ');
   return `
     <li class="settings-member" data-id="${u.id}">
       ${avatarHtml(u, 'settings-avatar settings-avatar--sm')}
       <div class="settings-member__info">
         <span class="settings-member__name">${esc(u.display_name)}</span>
         <span class="settings-member__meta">@${esc(u.username)} · ${esc(familyRole)}${systemRole}</span>
+        ${profileMeta ? `<span class="settings-member__meta">${profileMeta}</span>` : ''}
       </div>
       <button class="btn btn--icon btn--secondary" data-edit-user="${u.id}" aria-label="${esc(u.display_name)} ${t('settings.editMemberLabel')}" title="${t('settings.editMemberLabel')}">
         <i data-lucide="edit-2" aria-hidden="true"></i>
