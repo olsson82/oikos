@@ -220,7 +220,7 @@ export async function render(container, { user }) {
 
   const allowedTabs = [
     'general', 'meals', 'budget', 'shopping', 'calendar',
-    ...(user?.role === 'admin' ? ['family'] : []),
+    ...(user?.role === 'admin' ? ['family', 'api-tokens'] : []),
     'account',
   ];
   const storedTab = sessionStorage.getItem(SETTINGS_TAB_KEY) ?? 'general';
@@ -248,6 +248,7 @@ export async function render(container, { user }) {
         <button class="${btnClass('shopping')}" role="tab" data-tab="shopping" aria-selected="${btnAria('shopping')}">${t('settings.tabShopping')}</button>
         <button class="${btnClass('calendar')}" role="tab" data-tab="calendar" aria-selected="${btnAria('calendar')}">${t('settings.tabCalendar')}</button>
         ${user?.role === 'admin' ? `<button class="${btnClass('family')}" role="tab" data-tab="family" aria-selected="${btnAria('family')}">${t('settings.tabFamily')}</button>` : ''}
+        ${user?.role === 'admin' ? `<button class="${btnClass('api-tokens')}" role="tab" data-tab="api-tokens" aria-selected="${btnAria('api-tokens')}">${t('settings.tabApiTokens')}</button>` : ''}
         <button class="${btnClass('account')}"  role="tab" data-tab="account"  aria-selected="${btnAria('account')}">${t('settings.tabAccount')}</button>
       </nav>
 
@@ -573,6 +574,40 @@ export async function render(container, { user }) {
       </div>
       ` : ''}
 
+      ${user?.role === 'admin' ? `
+      <!-- Panel: API Tokens -->
+      <div class="settings-tab-panel" data-panel="api-tokens" role="tabpanel"${panelHidden('api-tokens')}>
+        <section class="settings-section">
+          <h2 class="settings-section__title">${t('settings.apiTokensTitle')}</h2>
+          <div class="settings-card">
+            <h3 class="settings-card__title">${t('settings.apiTokensCardTitle')}</h3>
+            <p class="form-hint" style="margin-bottom:var(--space-3)">${t('settings.apiTokensHint')}</p>
+            <ul class="settings-members" id="api-token-list">
+              ${apiTokens.map(apiTokenHtml).join('')}
+            </ul>
+            <form id="api-token-form" class="settings-form" autocomplete="off">
+              <div class="form-group">
+                <label class="form-label" for="api-token-name">${t('settings.apiTokenNameLabel')}</label>
+                <input class="form-input" type="text" id="api-token-name" maxlength="100" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="api-token-expires">${t('settings.apiTokenExpiresLabel')}</label>
+                <input class="form-input" type="datetime-local" id="api-token-expires" />
+                <p class="form-hint">${t('settings.apiTokenExpiresHint')}</p>
+              </div>
+              <div id="api-token-created" class="settings-token-output" hidden>
+                <label class="form-label" for="api-token-created-value">${t('settings.apiTokenCreatedLabel')}</label>
+                <input class="form-input" id="api-token-created-value" type="text" readonly />
+                <p class="form-hint">${t('settings.apiTokenCreatedHint')}</p>
+              </div>
+              <div id="api-token-error" class="form-error" hidden></div>
+              <button type="submit" class="btn btn--primary">${t('settings.apiTokenCreate')}</button>
+            </form>
+          </div>
+        </section>
+      </div>
+      ` : ''}
+
       <!-- Panel: Konto -->
       <div class="settings-tab-panel" data-panel="account" role="tabpanel"${panelHidden('account')}>
         <section class="settings-section">
@@ -627,37 +662,6 @@ export async function render(container, { user }) {
             </form>
           </div>
         </section>
-
-        ${user?.role === 'admin' ? `
-        <section class="settings-section">
-          <h2 class="settings-section__title">${t('settings.apiTokensTitle')}</h2>
-          <div class="settings-card">
-            <h3 class="settings-card__title">${t('settings.apiTokensCardTitle')}</h3>
-            <p class="form-hint" style="margin-bottom:var(--space-3)">${t('settings.apiTokensHint')}</p>
-            <ul class="settings-members" id="api-token-list">
-              ${apiTokens.map(apiTokenHtml).join('')}
-            </ul>
-            <form id="api-token-form" class="settings-form" autocomplete="off">
-              <div class="form-group">
-                <label class="form-label" for="api-token-name">${t('settings.apiTokenNameLabel')}</label>
-                <input class="form-input" type="text" id="api-token-name" maxlength="100" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="api-token-expires">${t('settings.apiTokenExpiresLabel')}</label>
-                <input class="form-input" type="datetime-local" id="api-token-expires" />
-                <p class="form-hint">${t('settings.apiTokenExpiresHint')}</p>
-              </div>
-              <div id="api-token-created" class="settings-token-output" hidden>
-                <label class="form-label" for="api-token-created-value">${t('settings.apiTokenCreatedLabel')}</label>
-                <input class="form-input" id="api-token-created-value" type="text" readonly />
-                <p class="form-hint">${t('settings.apiTokenCreatedHint')}</p>
-              </div>
-              <div id="api-token-error" class="form-error" hidden></div>
-              <button type="submit" class="btn btn--primary">${t('settings.apiTokenCreate')}</button>
-            </form>
-          </div>
-        </section>
-        ` : ''}
 
         <section class="settings-section">
           <button class="btn btn--danger-outline settings-logout-btn" id="logout-btn">${t('settings.logout')}</button>
