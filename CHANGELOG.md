@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.1] - 2026-04-28
+
+### Changed
+- Dependency: `express-rate-limit` updated from 8.3.2 to 8.4.1
+
 ## [0.29.0] - 2026-04-28
 
 ### Added
