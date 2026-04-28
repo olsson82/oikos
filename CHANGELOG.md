@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.3] - 2026-04-28
+
+### Fixed
+- Dashboard: weather widget background gradient was overridden by the higher-specificity `.dashboard .widget { background: var(--color-surface) }` rule, causing white text on a white background in light mode
+
 ## [0.29.2] - 2026-04-28
 
 ### Changed

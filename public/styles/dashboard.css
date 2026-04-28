@@ -2278,6 +2278,10 @@
 
 .dashboard .weather-widget {
   border-radius: 8px;
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-deep) 100%);
+  color: var(--color-text-on-accent);
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
 }
 
 .dashboard .weather-widget__refresh {
