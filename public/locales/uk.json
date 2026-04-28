@@ -44,7 +44,7 @@
     "main": "Головна навігація",
     "navigation": "Навігація",
     "quickActions": "Швидкі дії",
-    "recipes": "Recipes",
+    "recipes": "Рецепти",
     "more": "Більше"
   },
   "dashboard": {
@@ -813,28 +813,28 @@
     "customWeeks": "Weeks"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "Рецепти",
+    "addRecipe": "Додати рецепт",
+    "editRecipe": "Редагувати рецепт",
+    "emptyTitle": "Немає рецептів",
+    "emptyDescription": "Збережіть свої улюблені рецепти й повторно використовуйте їх у плануванні їжі.",
+    "titleLabel": "Назва *",
+    "titlePlaceholder": "наприклад, Паста Карбонара",
+    "notesLabel": "Нотатки",
+    "notesPlaceholder": "Необов'язково...",
+    "urlLabel": "Посилання на рецепт",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "Інгредієнти",
+    "addToMeals": "Додати до плану харчування",
+    "openLink": "Відкрити посилання на рецепт",
+    "deleteConfirm": "Видалити рецепт \"{{title}}\"?",
+    "created": "Рецепт збережено.",
+    "updated": "Рецепт оновлено.",
+    "deleted": "Рецепт видалено.",
+    "titleRequired": "Назва обов'язкова",
+    "duplicate": "Дублювати",
+    "duplicated": "Рецепт продубльовано.",
+    "copySuffix": "копія"
   },
   "search": {
     "title": "Пошук",
@@ -883,5 +883,16 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "tasks": "Натисніть +, щоб створити перше завдання. Проведіть картку вліво, щоб видалити.",
+    "calendar": "Підключіть Google Календар у Налаштування → Інтеграції для автоматичної синхронізації.",
+    "shopping": "Додавайте товари й проводьте, щоб позначити або видалити.",
+    "notes": "Натисніть +, щоб створити нову нотатку. Нотатки шукаються за повним текстом.",
+    "contacts": "Додайте важливі контакти — лікар, школа, екстрені служби — для швидкого доступу.",
+    "budget": "Створіть категорії та вносіть доходи й витрати.",
+    "meals": "Плануйте харчування на тиждень і пов'язуйте рецепти.",
+    "birthdays": "Додайте дні народження — ви отримаєте нагадування завчасно.",
+    "recipes": "Створюйте рецепти та пов'язуйте їх із планувальником харчування."
   }
 }

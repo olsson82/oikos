@@ -44,7 +44,7 @@
     "main": "Главная навигация",
     "navigation": "Навигация",
     "quickActions": "Быстрые действия",
-    "recipes": "Recipes",
+    "recipes": "Рецепты",
     "more": "Ещё"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "месяцев"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "Рецепты",
+    "addRecipe": "Добавить рецепт",
+    "editRecipe": "Редактировать рецепт",
+    "emptyTitle": "Рецептов еще нет",
+    "emptyDescription": "Сохраняйте свои любимые рецепты и используйте их повторно при планировании питания.",
+    "titleLabel": "Название *",
+    "titlePlaceholder": "напр. Паста Карбонара",
+    "notesLabel": "Заметки",
+    "notesPlaceholder": "Необязательно...",
+    "urlLabel": "Ссылка на рецепт",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "Ингредиенты",
+    "addToMeals": "Добавить в план питания",
+    "openLink": "Открыть ссылку на рецепт",
+    "deleteConfirm": "Удалить рецепт \"{{title}}\"?",
+    "created": "Рецепт сохранен.",
+    "updated": "Рецепт обновлен.",
+    "deleted": "Рецепт удален.",
+    "titleRequired": "Название обязательно",
+    "duplicate": "Дублировать",
+    "duplicated": "Рецепт дублирован.",
+    "copySuffix": "копия"
   },
   "search": {
     "title": "Поиск",
@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "Создавайте рецепты и связывайте их с вашим планом питания."
   }
 }

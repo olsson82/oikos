@@ -44,7 +44,7 @@
     "main": "Ana gezinme",
     "navigation": "Gezinme",
     "quickActions": "Hızlı işlemler",
-    "recipes": "Recipes",
+    "recipes": "Tarifler",
     "more": "Daha Fazla"
   },
   "dashboard": {
@@ -782,28 +782,28 @@
     "unitMonths": "ay"
   },
   "recipes": {
-    "title": "Recipes",
-    "addRecipe": "Add recipe",
-    "editRecipe": "Edit recipe",
-    "emptyTitle": "No recipes yet",
-    "emptyDescription": "Save your favorite recipes and reuse them in meal planning.",
-    "titleLabel": "Title *",
-    "titlePlaceholder": "e.g. Pasta Carbonara",
-    "notesLabel": "Notes",
-    "notesPlaceholder": "Optional...",
-    "urlLabel": "Recipe link",
+    "title": "Tarifler",
+    "addRecipe": "Tarif ekle",
+    "editRecipe": "Tarifi düzenle",
+    "emptyTitle": "Henüz tarif yok",
+    "emptyDescription": "Favori tariflerinizi kaydedin ve yemek planlama sırasında yeniden kullanın.",
+    "titleLabel": "Başlık *",
+    "titlePlaceholder": "ör. Pasta Carbonara",
+    "notesLabel": "Notlar",
+    "notesPlaceholder": "İsteğe bağlı...",
+    "urlLabel": "Tarif bağlantısı",
     "urlPlaceholder": "https://...",
-    "ingredientsLabel": "Ingredients",
-    "addToMeals": "Add to meal plan",
-    "openLink": "Open recipe link",
-    "deleteConfirm": "Delete recipe \"{{title}}\"?",
-    "created": "Recipe saved.",
-    "updated": "Recipe updated.",
-    "deleted": "Recipe deleted.",
-    "titleRequired": "Title is required",
-    "duplicate": "Duplicate",
-    "duplicated": "Recipe duplicated.",
-    "copySuffix": "copy"
+    "ingredientsLabel": "Malzemeler",
+    "addToMeals": "Yemek planına ekle",
+    "openLink": "Tarif bağlantısını aç",
+    "deleteConfirm": "\"{{title}}\" tarifini sil?",
+    "created": "Tarif kaydedildi.",
+    "updated": "Tarif güncellendi.",
+    "deleted": "Tarif silindi.",
+    "titleRequired": "Başlık gerekli",
+    "duplicate": "Çoğalt",
+    "duplicated": "Tarif çoğaltıldı.",
+    "copySuffix": "kopya"
   },
   "search": {
     "title": "Arama",
@@ -883,5 +883,8 @@
   },
   "offline": {
     "banner": "Offline – reconnecting…"
+  },
+  "emptyHint": {
+    "recipes": "Tarifler oluşturun ve yemek planlayıcınıza bağlayın."
   }
 }
