@@ -1199,6 +1199,16 @@ if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
 // --------------------------------------------------------
 (async () => {
   try {
+    // Vorab-Theme-Anwendung ohne Abhängigkeit von window.oikos
+    const stored = localStorage.getItem('oikos-theme');
+    if (stored === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (stored === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    
     await initI18n();
     navigate(location.pathname, false);
   } catch (err) {
@@ -1214,6 +1224,16 @@ window.oikos = {
   navigate,
   showToast,
   setThemeColor,
+  applyTheme: (value) => {
+    localStorage.setItem('oikos-theme', value);
+    if (value === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (value === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  },
   restoreThemeColor: () => {
     const route = ROUTES.find((r) => r.path === currentPath);
     updateThemeColorForRoute(route);

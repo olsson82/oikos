@@ -1788,15 +1788,7 @@ function currentTheme() {
 }
 
 function applyTheme(value) {
-  localStorage.setItem('oikos-theme', value);
-  if (value === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else if (value === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-    // tokens.css @media (prefers-color-scheme: dark) übernimmt sofort
-  }
+  window.oikos?.applyTheme(value);
 }
 
 function showError(el, msg) {
